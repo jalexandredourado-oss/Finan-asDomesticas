@@ -2,11 +2,12 @@
   "name": "FinançasPro - Controle Financeiro",
   "short_name": "FinançasPro",
   "description": "Controle inteligente de finanças domésticas.",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#080d1a",
-  "theme_color": "#0b1329",
+  "theme_color": "#000000",
   "lang": "pt-BR",
+    "orientation": "portrait",
   "icons": [
     {
       "src": "./icon-192.jpeg",
@@ -18,6 +19,5 @@
     "background_color": "#000000",
     "display": "standalone",
   "theme_color": "#2563eb",
-  "orientation": "portrait"
 
 }
