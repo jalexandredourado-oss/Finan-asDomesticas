@@ -1,12 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>FinançasPro - Controle Financeiro</title>
+  <title>FinançasPro - O seu controle de saldo inteligente</title>
   
   <!-- PWA Headers -->
-  <link class="rounded-2xl" rel="apple-touch-icon" href="./icon-192.jpeg">
+  <link class="rounded-2xl" rel="apple-touch-icon" href="./icon-192.jfif">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0b1329">
   <meta name="mobile-web-app-capable" content="yes">
@@ -1102,15 +1103,13 @@
             </div>
             
             <div class="shrink-0 flex items-center gap-3">
-               ${!isIncome ? `<button type="button" class="payment-toggle px-3 py-2 rounded-xl text-[9px] font-black uppercase border transition-all ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como nao pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
                ${t.installmentLabel ? `<span class="bg-blue-500/15 text-blue-400 px-2 py-1 rounded text-[9px] font-black whitespace-nowrap">Parc ${t.installmentLabel}</span>` : ''}
-               <div class="shrink-0 flex flex-col items-end gap-1.5 text-right">
+               <div class="shrink-0 flex flex-col items-end gap-1 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
-
-      
-      <div class="text-sm font-black whitespace-nowrap ${isIncome || isPaid ? 'text-green-accent' : 'text-red-accent'} select-none">
-         ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
+                  <div class="text-sm font-black whitespace-nowrap ${isIncome || isPaid ? 'text-green-accent' : 'text-red-accent'} select-none">
+                     ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
                   </div>
+                  ${!isIncome ? `<button type="button" class="payment-toggle mt-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border transition-all shadow-md ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500 shadow-emerald-900/20' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como nao pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
                </div>
             </div>
          `;
