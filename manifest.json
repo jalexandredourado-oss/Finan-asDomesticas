@@ -4,8 +4,8 @@
   "description": "Controle inteligente de finanças domésticas.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#080d1a",
-  "theme_color": "#000000",
+  "background_color": "#000000",
+  "theme_color": "#2563eb",
   "lang": "pt-BR",
     "orientation": "portrait",
   "icons": [
