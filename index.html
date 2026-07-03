@@ -397,8 +397,8 @@
             </div>
             
             <div class="flex flex-col text-right">
-               <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Total Despesas</span>
-               <span id="history-month-expense-total" class="text-sm font-black text-red-accent">R$ 0,00</span>
+               <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">Total Despesas</span>
+               <span id="history-month-expense-total" class="text-xs font-black text-red-accent">R$ 0,00</span>
             </div>
           </div>
           
@@ -558,7 +558,7 @@
      <header class="bg-slate-900 px-6 py-4 flex justify-between items-center no-print shrink-0">
         <h2 class="text-white font-black uppercase text-xs tracking-widest">Extrato de Lançamentos</h2>
         <div class="flex gap-2">
-           <button id="btn-share-statement" class="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl active:scale-90 transition-colors" title="Compartilhar Extrato PDF"><i data-lucide="share-2" class="w-5 h-5"></i></button>
+           <button id="btn-share-statement" class="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl active:scale-90" title="Compartilhar Extrato PDF"><i data-lucide="share-2" class="w-5 h-5"></i></button>
            <button id="btn-print-action" class="p-3 bg-emerald-600 text-slate-955 rounded-xl active:scale-90" title="Imprimir"><i data-lucide="printer" class="w-5 h-5"></i></button>
            <button id="btn-close-statement" class="p-3 bg-slate-800 text-slate-400 rounded-xl active:scale-90" title="Fechar"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
@@ -613,8 +613,9 @@
       activeType: 'expense', 
       isInstallment: false,
       searchQuery: '',
-      filterCard: 'all', // Filtro de Cartão Adicionado
+      filterCategory: 'all',
       filterType: 'all', 
+      filterCard: 'all',
       sharingCode: '',
       firebaseConfig: null
     };
@@ -624,7 +625,7 @@
     let isCloudConnected = false;
     let cloudUnsubscribe = null;
     let authUser = null;
-    let totalPieChartInstance = null; 
+    let totalPieChartInstance = null; // Instância do Gráfico
 
     function formatBRL(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -902,13 +903,12 @@
                 ...t, 
                 displayMonth: `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`, 
                 displayAmount: t.amount / t.installmentsCount, 
-                installmentLabel: `${i + 1}/${t.installmentsCount}`,
-                installmentNumber: i + 1
+                installmentLabel: `${i + 1}/${t.installmentsCount}` 
               });
             }
           }
         } else { 
-          expanded.push({ ...t, displayMonth: t.billingMonth, displayAmount: t.amount, installmentLabel: null, installmentNumber: 1 }); 
+          expanded.push({ ...t, displayMonth: t.billingMonth, displayAmount: t.amount, installmentLabel: null }); 
         }
       });
       return expanded;
@@ -945,6 +945,7 @@
       let totalExpenseSum = 0;
       let unpaidExpenseSum = 0;
 
+      // Cálculo Mensal para KPIs Superiores
       const monthlyTransactions = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
       monthlyTransactions.forEach(t => {
         if (t.type === 'income') {
@@ -973,6 +974,7 @@
       document.getElementById('kpi-income').textContent = formatBRL(incomeSum);
       document.getElementById('kpi-expenses').textContent = formatBRL(unpaidExpenseSum);
 
+      // Renderizando Gráfico Pizza (Valores Históricos e não somente do mês)
       let allTimeIncome = 0;
       let allTimeExpense = 0;
       state.transactions.forEach(t => {
@@ -1020,6 +1022,7 @@
           });
       }
 
+      // Renderizando Minhas Economias (Tabela)
       const activityList = document.getElementById('dashboard-activity-list');
       if (activityList) {
           activityList.innerHTML = "";
@@ -1110,12 +1113,9 @@
          div.className = "bg-card-dark p-4 rounded-2xl flex justify-between items-center gap-4 hover:bg-slate-900/60 transition-all cursor-pointer";
          div.innerHTML = `
             <div class="flex items-center gap-3 flex-1 min-w-0">
-               <!-- Coluna do Ícone -->
                <div class="p-3 rounded-xl ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} shrink-0">
                   <i data-lucide="${isIncome ? 'trending-up' : 'trending-down'}" class="w-4 h-4"></i>
                </div>
-               
-               <!-- Descrição, Categoria, Conta e Parcela -->
                <div class="min-w-0 flex-1">
                   <p class="text-xs font-bold text-white uppercase truncate">${t.description}</p>
                   <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[9px] font-black text-slate-550">
@@ -1127,7 +1127,6 @@
             </div>
             
             <div class="shrink-0 flex items-center gap-3">
-               <!-- Valores, Data e Botão de Pagamento -->
                <div class="shrink-0 flex flex-col items-end gap-1 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
                   <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : (isPaid ? 'text-blue-400' : 'text-red-accent')} select-none"> ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)} </div> 
@@ -1529,8 +1528,8 @@
 
     document.getElementById('btn-type-expense').onclick = () => {
        state.activeType = 'expense';
-       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white transition-all";
-       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all";
+       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white";
+       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
        document.getElementById('btn-submit-transaction').className = "w-full py-4 mt-2 bg-rose-600 hover:bg-rose-500 rounded-2xl font-black uppercase text-xs tracking-widest transition-all";
        document.getElementById('btn-submit-transaction').textContent = "Guardar Despesa";
        document.getElementById('lbl-card-origem').textContent = "Conta Origem";
@@ -1541,8 +1540,8 @@
 
     document.getElementById('btn-type-income').onclick = () => {
        state.activeType = 'income';
-       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-emerald-600 text-slate-955 transition-all";
-       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all";
+       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-emerald-600 text-slate-955";
+       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
        document.getElementById('btn-submit-transaction').className = "w-full py-4 mt-2 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-black uppercase text-xs tracking-widest transition-all text-slate-955";
        document.getElementById('btn-submit-transaction').textContent = "Guardar Receita";
        document.getElementById('lbl-card-origem').textContent = "Conta Destino";
@@ -1635,25 +1634,25 @@
 
     document.getElementById('filter-all').onclick = () => {
        state.filterType = 'all';
-       document.getElementById('filter-all').className = "px-4 py-2 rounded-lg font-bold bg-slate-800 text-white";
-       document.getElementById('filter-expenses').className = "px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white";
-       document.getElementById('filter-incomes').className = "px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white";
+       document.getElementById('filter-all').className = "px-2.5 py-1.5 rounded-lg font-bold bg-slate-800 text-white";
+       document.getElementById('filter-expenses').className = "px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white";
+       document.getElementById('filter-incomes').className = "px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white";
        renderHistory();
     };
 
     document.getElementById('filter-expenses').onclick = () => {
        state.filterType = 'expense';
-       document.getElementById('filter-all').className = "px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white";
-       document.getElementById('filter-expenses').className = "px-4 py-2 rounded-lg font-bold bg-rose-600 text-white";
-       document.getElementById('filter-incomes').className = "px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white";
+       document.getElementById('filter-all').className = "px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white";
+       document.getElementById('filter-expenses').className = "px-2.5 py-1.5 rounded-lg font-bold bg-rose-600 text-white";
+       document.getElementById('filter-incomes').className = "px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white";
        renderHistory();
     };
 
     document.getElementById('filter-incomes').onclick = () => {
        state.filterType = 'income';
-       document.getElementById('filter-all').className = "px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white";
-       document.getElementById('filter-expenses').className = "px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white";
-       document.getElementById('filter-incomes').className = "px-4 py-2 rounded-lg font-bold bg-emerald-600 text-slate-955";
+       document.getElementById('filter-all').className = "px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white";
+       document.getElementById('filter-expenses').className = "px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white";
+       document.getElementById('filter-incomes').className = "px-2.5 py-1.5 rounded-lg font-bold bg-emerald-600 text-slate-955";
        renderHistory();
     };
 
