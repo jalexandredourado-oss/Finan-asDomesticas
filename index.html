@@ -6,7 +6,7 @@
   <title>FinançasPro - O seu controle de saldo inteligente</title>
   
   <!-- PWA Headers -->
-  <link class="rounded-2xl" rel="apple-touch-icon" href="./icon-192.jpeg">
+  <link class="rounded-2xl" rel="apple-touch-icon" href="./icon-192.jfif">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0b1329">
   <meta name="mobile-web-app-capable" content="yes">
@@ -392,8 +392,10 @@
               <button id="filter-expenses" class="px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white transition-all">Despesas</button>
               <button id="filter-incomes" class="px-4 py-2 rounded-lg font-bold text-slate-500 hover:text-white transition-all">Receitas</button>
             </div>
-            <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full scrollbar-hide" id="history-category-filters">
-            </div>
+          </div>
+          
+          <!-- Filtro Adicional de Cartões/Contas -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 mt-2 max-w-full scrollbar-hide border-t border-slate-800/50 pt-3" id="history-card-filters">
           </div>
         </div>
 
@@ -604,6 +606,7 @@
       searchQuery: '',
       filterCategory: 'all',
       filterType: 'all', 
+      filterCard: 'all',
       sharingCode: '',
       firebaseConfig: null
     };
@@ -1071,6 +1074,10 @@
          list = list.filter(t => t.category === state.filterCategory);
       }
 
+      if (state.filterCard !== 'all') {
+         list = list.filter(t => (t.cardUsed || 'Sem Conta') === state.filterCard);
+      }
+
       if (state.searchQuery) {
          list = list.filter(t => t.description.toLowerCase().includes(state.searchQuery) || t.category.toLowerCase().includes(state.searchQuery));
       }
@@ -1109,7 +1116,9 @@
                <!-- Valores, Data e Botão de Pagamento -->
                <div class="shrink-0 flex flex-col items-end gap-1 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
-                   <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : (isPaid ? 'text-blue-400' : 'text-red-accent')} select-none"> ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)} </div> 
+                  <div class="text-sm font-black whitespace-nowrap ${isIncome || isPaid ? 'text-green-accent' : 'text-red-accent'} select-none">
+                     ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
+                  </div>
                   ${!isIncome ? `<button type="button" class="payment-toggle mt-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border transition-all shadow-md ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500 shadow-emerald-900/20' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como nao pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
                </div>
             </div>
@@ -1273,25 +1282,26 @@
        });
     }
 
-    function renderHistoryFilterChips() {
-       const container = document.getElementById('history-category-filters');
+    function renderHistoryCardFilters() {
+       const container = document.getElementById('history-card-filters');
        if (!container) return;
        container.innerHTML = '';
        
        const all = document.createElement('button');
-       all.textContent = "Todas";
-       all.className = `px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border ${state.filterCategory === 'all' ? 'bg-emerald-600 border-emerald-500 text-slate-955' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
-       all.onclick = () => { state.filterCategory = 'all'; renderHistoryFilterChips(); renderHistory(); };
+       all.innerHTML = '<i data-lucide="credit-card" class="w-3 h-3 inline-block mr-1"></i> Todas as Contas';
+       all.className = `flex items-center px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border transition-all ${state.filterCard === 'all' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-900/20' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
+       all.onclick = () => { state.filterCard = 'all'; renderHistoryCardFilters(); renderHistory(); };
        container.appendChild(all);
 
-       const unique = [...new Set(state.transactions.map(t => t.category))];
-       unique.forEach(c => {
+       const uniqueCards = [...new Set(state.transactions.map(t => t.cardUsed || 'Sem Conta'))];
+       uniqueCards.forEach(c => {
           const btn = document.createElement('button');
           btn.textContent = c;
-          btn.className = `px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border ${state.filterCategory === c ? 'bg-emerald-600 border-emerald-500 text-slate-955' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
-          btn.onclick = () => { state.filterCategory = c; renderHistoryFilterChips(); renderHistory(); };
+          btn.className = `px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border transition-all ${state.filterCard === c ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-900/20' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
+          btn.onclick = () => { state.filterCard = c; renderHistoryCardFilters(); renderHistory(); };
           container.appendChild(btn);
        });
+       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     function renderAll() {
@@ -1302,7 +1312,7 @@
           populateFormSelects();
        } else if (state.activeTab === 'history') {
           renderMonthsScroll();
-          renderHistoryFilterChips();
+          renderHistoryCardFilters();
           renderHistory();
        }
     }
@@ -1708,9 +1718,22 @@
     };
 
    function handleViewStatement() {
-       const list = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
+       let list = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
+       
+       if (state.filterType !== 'all') {
+          list = list.filter(t => t.type === state.filterType);
+       }
+
+       if (state.filterCard !== 'all') {
+          list = list.filter(t => (t.cardUsed || 'Sem Conta') === state.filterCard);
+       }
+
+       if (state.searchQuery) {
+          list = list.filter(t => t.description.toLowerCase().includes(state.searchQuery) || t.category.toLowerCase().includes(state.searchQuery));
+       }
+
        if (list.length === 0) {
-          showToast("Nenhum lançamento no mês para extrato!", "error");
+          showToast("Nenhum lançamento encontrado com os filtros atuais!", "error");
           return;
        }
        const totals = list.reduce((acc, curr) => {
