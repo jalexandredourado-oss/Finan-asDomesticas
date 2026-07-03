@@ -6,7 +6,7 @@
   <title>FinançasPro - O seu controle de saldo inteligente</title>
   
   <!-- PWA Headers -->
-  <link class="rounded-2xl" rel="apple-touch-icon" href="./icon-192.jfif">
+  <link class="rounded-2xl" rel="apple-touch-icon" href="./icon-192.jpeg">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0b1329">
   <meta name="mobile-web-app-capable" content="yes">
@@ -22,6 +22,9 @@
   
   <!-- Chart.js para o Gráfico de Pizza -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- html2pdf para geração de PDF e compartilhamento -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -327,18 +330,18 @@
                 </div>
               </div>
 
-<!-- Altere para este formato -->
-<div class="grid grid-cols-5 gap-3">
-  <div class="space-y-1 col-span-2"> <!-- Mês ocupa 2 de 5 partes -->
-    <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mês Ref.</label>
-    <select id="transaction-month" class="w-full p-3.5 rounded-xl font-bold text-xs"></select>
-  </div>
-  <div class="space-y-1 col-span-3"> <!-- Conta ocupa 3 de 5 partes -->
-    <label id="lbl-card-origem" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Conta Origem</label>
-    <select id="transaction-card" class="w-full p-3.5 rounded-xl font-bold text-xs">
-    </select>
-  </div>
-</div>
+              <!-- Nova Grid 5 colunas para Mês e Conta Origem -->
+              <div class="grid grid-cols-5 gap-3">
+                <div class="space-y-1 col-span-2"> <!-- Mês ocupa 2 de 5 partes -->
+                  <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mês Ref.</label>
+                  <select id="transaction-month" class="w-full p-3.5 rounded-xl font-bold text-xs"></select>
+                </div>
+                <div class="space-y-1 col-span-3"> <!-- Conta ocupa 3 de 5 partes -->
+                  <label id="lbl-card-origem" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Conta Origem</label>
+                  <select id="transaction-card" class="w-full p-3.5 rounded-xl font-bold text-xs">
+                  </select>
+                </div>
+              </div>
 
               <div id="container-payment-method" class="space-y-1">
                 <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Forma de Pagamento</label>
@@ -373,12 +376,16 @@
         <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide" id="history-months-scroll">
         </div>
 
-<div class="flex justify-end mt-2">
-  <button id="btn-history-view-statement" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl text-[10px] font-black uppercase transition-all">
-    <i data-lucide="file-text" class="w-4 h-4"></i>
-    Ver Extrato Geral
-  </button>
-</div>
+        <div class="flex justify-between items-center mt-2 px-1">
+          <div class="flex flex-col">
+             <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Total Despesas</span>
+             <span id="history-month-expense-total" class="text-sm font-black text-red-accent">R$ 0,00</span>
+          </div>
+          <button id="btn-history-view-statement" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl text-[10px] font-black uppercase transition-all shadow-md shadow-emerald-500/20">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+            Ver Extrato Geral
+          </button>
+        </div>
 
         <div class="bg-card-dark p-5 rounded-3xl space-y-4">
           <div class="relative">
@@ -394,8 +401,8 @@
             </div>
           </div>
           
-          <!-- Filtro Adicional de Cartões/Contas -->
-          <div class="flex items-center gap-2 overflow-x-auto pb-1 mt-2 max-w-full scrollbar-hide border-t border-slate-800/50 pt-3" id="history-card-filters">
+          <!-- Filtro Dinâmico de Cartões -->
+          <div class="flex items-center gap-2 overflow-x-auto pt-2 pb-1 max-w-full scrollbar-hide border-t border-slate-800" id="history-card-filters">
           </div>
         </div>
 
@@ -550,8 +557,9 @@
      <header class="bg-slate-900 px-6 py-4 flex justify-between items-center no-print shrink-0">
         <h2 class="text-white font-black uppercase text-xs tracking-widest">Extrato de Lançamentos</h2>
         <div class="flex gap-2">
-           <button id="btn-print-action" class="p-3 bg-emerald-600 text-slate-955 rounded-xl active:scale-90"><i data-lucide="printer" class="w-5 h-5"></i></button>
-           <button id="btn-close-statement" class="p-3 bg-slate-800 text-slate-400 rounded-xl active:scale-90"><i data-lucide="x" class="w-5 h-5"></i></button>
+           <button id="btn-share-statement" class="p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl active:scale-90 transition-colors" title="Compartilhar Extrato PDF"><i data-lucide="share-2" class="w-5 h-5"></i></button>
+           <button id="btn-print-action" class="p-3 bg-emerald-600 text-slate-955 rounded-xl active:scale-90" title="Imprimir"><i data-lucide="printer" class="w-5 h-5"></i></button>
+           <button id="btn-close-statement" class="p-3 bg-slate-800 text-slate-400 rounded-xl active:scale-90" title="Fechar"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
      </header>
      <div id="statement-content" class="flex-1 overflow-y-auto p-8 text-slate-900 bg-white">
@@ -604,9 +612,8 @@
       activeType: 'expense', 
       isInstallment: false,
       searchQuery: '',
-      filterCategory: 'all',
+      filterCard: 'all', // Filtro de Cartão Adicionado
       filterType: 'all', 
-      filterCard: 'all',
       sharingCode: '',
       firebaseConfig: null
     };
@@ -616,7 +623,7 @@
     let isCloudConnected = false;
     let cloudUnsubscribe = null;
     let authUser = null;
-    let totalPieChartInstance = null; // Instância do Gráfico
+    let totalPieChartInstance = null; 
 
     function formatBRL(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -894,12 +901,13 @@
                 ...t, 
                 displayMonth: `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`, 
                 displayAmount: t.amount / t.installmentsCount, 
-                installmentLabel: `${i + 1}/${t.installmentsCount}` 
+                installmentLabel: `${i + 1}/${t.installmentsCount}`,
+                installmentNumber: i + 1
               });
             }
           }
         } else { 
-          expanded.push({ ...t, displayMonth: t.billingMonth, displayAmount: t.amount, installmentLabel: null }); 
+          expanded.push({ ...t, displayMonth: t.billingMonth, displayAmount: t.amount, installmentLabel: null, installmentNumber: 1 }); 
         }
       });
       return expanded;
@@ -936,7 +944,6 @@
       let totalExpenseSum = 0;
       let unpaidExpenseSum = 0;
 
-      // Cálculo Mensal para KPIs Superiores
       const monthlyTransactions = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
       monthlyTransactions.forEach(t => {
         if (t.type === 'income') {
@@ -965,7 +972,6 @@
       document.getElementById('kpi-income').textContent = formatBRL(incomeSum);
       document.getElementById('kpi-expenses').textContent = formatBRL(unpaidExpenseSum);
 
-      // Renderizando Gráfico Pizza (Valores Históricos e não somente do mês)
       let allTimeIncome = 0;
       let allTimeExpense = 0;
       state.transactions.forEach(t => {
@@ -1013,7 +1019,6 @@
           });
       }
 
-      // Renderizando Minhas Economias (Tabela)
       const activityList = document.getElementById('dashboard-activity-list');
       if (activityList) {
           activityList.innerHTML = "";
@@ -1070,16 +1075,24 @@
          list = list.filter(t => t.type === state.filterType);
       }
 
-      if (state.filterCategory !== 'all') {
-         list = list.filter(t => t.category === state.filterCategory);
-      }
-
       if (state.filterCard !== 'all') {
          list = list.filter(t => (t.cardUsed || 'Sem Conta') === state.filterCard);
       }
 
       if (state.searchQuery) {
          list = list.filter(t => t.description.toLowerCase().includes(state.searchQuery) || t.category.toLowerCase().includes(state.searchQuery));
+      }
+
+      // Calcula subtotal dinâmico de Despesas e atualiza interface
+      let monthExpenseTotal = 0;
+      list.forEach(t => {
+         if (t.type === 'expense') {
+            monthExpenseTotal += t.displayAmount;
+         }
+      });
+      const totalEl = document.getElementById('history-month-expense-total');
+      if (totalEl) {
+         totalEl.textContent = formatBRL(monthExpenseTotal);
       }
 
       if (list.length === 0) {
@@ -1116,9 +1129,7 @@
                <!-- Valores, Data e Botão de Pagamento -->
                <div class="shrink-0 flex flex-col items-end gap-1 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
-                  <div class="text-sm font-black whitespace-nowrap ${isIncome || isPaid ? 'text-green-accent' : 'text-red-accent'} select-none">
-                     ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)}
-                  </div>
+                  <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : (isPaid ? 'text-blue-400' : 'text-red-accent')} select-none"> ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)} </div> 
                   ${!isIncome ? `<button type="button" class="payment-toggle mt-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border transition-all shadow-md ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500 shadow-emerald-900/20' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como nao pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
                </div>
             </div>
@@ -1288,19 +1299,20 @@
        container.innerHTML = '';
        
        const all = document.createElement('button');
-       all.innerHTML = '<i data-lucide="credit-card" class="w-3 h-3 inline-block mr-1"></i> Todas as Contas';
-       all.className = `flex items-center px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border transition-all ${state.filterCard === 'all' ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-900/20' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
+       all.innerHTML = '<i data-lucide="wallet" class="w-3 h-3"></i> Todas';
+       all.className = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border ${state.filterCard === 'all' ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
        all.onclick = () => { state.filterCard = 'all'; renderHistoryCardFilters(); renderHistory(); };
        container.appendChild(all);
 
-       const uniqueCards = [...new Set(state.transactions.map(t => t.cardUsed || 'Sem Conta'))];
-       uniqueCards.forEach(c => {
+       const unique = [...new Set(state.transactions.map(t => t.cardUsed || 'Sem Conta'))];
+       unique.forEach(c => {
           const btn = document.createElement('button');
-          btn.textContent = c;
-          btn.className = `px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border transition-all ${state.filterCard === c ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-900/20' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
+          btn.innerHTML = `<i data-lucide="credit-card" class="w-3 h-3"></i> ${c}`;
+          btn.className = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border ${state.filterCard === c ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
           btn.onclick = () => { state.filterCard = c; renderHistoryCardFilters(); renderHistory(); };
           container.appendChild(btn);
        });
+
        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
@@ -1516,8 +1528,8 @@
 
     document.getElementById('btn-type-expense').onclick = () => {
        state.activeType = 'expense';
-       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white";
-       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
+       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white transition-all";
+       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all";
        document.getElementById('btn-submit-transaction').className = "w-full py-4 mt-2 bg-rose-600 hover:bg-rose-500 rounded-2xl font-black uppercase text-xs tracking-widest transition-all";
        document.getElementById('btn-submit-transaction').textContent = "Guardar Despesa";
        document.getElementById('lbl-card-origem').textContent = "Conta Origem";
@@ -1528,8 +1540,8 @@
 
     document.getElementById('btn-type-income').onclick = () => {
        state.activeType = 'income';
-       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-emerald-600 text-slate-955";
-       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
+       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-emerald-600 text-slate-955 transition-all";
+       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all";
        document.getElementById('btn-submit-transaction').className = "w-full py-4 mt-2 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-black uppercase text-xs tracking-widest transition-all text-slate-955";
        document.getElementById('btn-submit-transaction').textContent = "Guardar Receita";
        document.getElementById('lbl-card-origem').textContent = "Conta Destino";
@@ -1723,19 +1735,18 @@
        if (state.filterType !== 'all') {
           list = list.filter(t => t.type === state.filterType);
        }
-
        if (state.filterCard !== 'all') {
           list = list.filter(t => (t.cardUsed || 'Sem Conta') === state.filterCard);
        }
-
        if (state.searchQuery) {
           list = list.filter(t => t.description.toLowerCase().includes(state.searchQuery) || t.category.toLowerCase().includes(state.searchQuery));
        }
 
        if (list.length === 0) {
-          showToast("Nenhum lançamento encontrado com os filtros atuais!", "error");
+          showToast("Nenhum lançamento encontrado com esses filtros!", "error");
           return;
        }
+       
        const totals = list.reduce((acc, curr) => {
           if (curr.type === 'income') acc.income += curr.displayAmount;
           else acc.expenses += curr.displayAmount;
@@ -1744,17 +1755,23 @@
 
        const netBalance = totals.income - totals.expenses;
 
+       let appliedFiltersLabel = '';
+       if (state.filterCard !== 'all' || state.filterType !== 'all') {
+          appliedFiltersLabel = `Filtros: ${state.filterType !== 'all' ? (state.filterType === 'expense' ? 'Despesas' : 'Receitas') : ''} ${state.filterCard !== 'all' ? `[${state.filterCard}]` : ''}`;
+       }
+
        const container = document.getElementById('statement-content');
        container.innerHTML = `
           <div class="border-b-4 border-slate-900 pb-8 mb-8 flex justify-between items-end uppercase">
              <div>
                 <h1 class="text-3xl font-black text-slate-900">FinançasPro</h1>
                 <p class="text-[10px] text-slate-400 font-extrabold tracking-widest mt-1">Extrato Mensal</p>
+                ${appliedFiltersLabel ? `<p class="text-[9px] font-black text-blue-500 mt-2">${appliedFiltersLabel}</p>` : ''}
              </div>
              <div class="text-right">
                 <p class="text-[9px] font-black text-slate-400">Referência</p>
                 <p class="font-black text-lg leading-none">${state.selectedMonth}</p>
-                <p class="text-[9px] font-black text-slate-400 mt-2">Saldo Total</p>
+                <p class="text-[9px] font-black text-slate-400 mt-2">Saldo Total (Filtrado)</p>
                 <p class="font-black text-lg leading-none ${netBalance >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
                    ${formatBRL(netBalance)}
                 </p>
@@ -1791,6 +1808,48 @@
 
     document.getElementById('btn-history-view-statement').onclick = handleViewStatement;    
     
+    document.getElementById('btn-share-statement').onclick = () => {
+       const element = document.getElementById('statement-content');
+       let filename = `Extrato_FinancasPro_${state.selectedMonth.replace('/', '-')}`;
+       if (state.filterCard !== 'all') { filename += `_${state.filterCard}`; }
+       filename += '.pdf';
+       
+       const opt = {
+          margin:       0.5,
+          filename:     filename,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+       };
+
+       showToast("Preparando PDF para partilha...", "info");
+
+       html2pdf().set(opt).from(element).outputPdf('blob').then(function(pdfBlob) {
+          const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+          
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+             navigator.share({
+                title: 'Extrato FinançasPro',
+                text: `Aqui está o extrato de lançamentos referente ao mês ${state.selectedMonth}.`,
+                files: [file]
+             }).catch(err => {
+                console.log("Partilha cancelada ou falhou", err);
+             });
+          } else {
+             const url = URL.createObjectURL(pdfBlob);
+             const a = document.createElement('a');
+             a.href = url;
+             a.download = filename;
+             a.click();
+             URL.revokeObjectURL(url);
+             showToast("PDF salvo (Menu de partilha indisponível no dispositivo).", "success");
+          }
+       }).catch(err => {
+          console.error(err);
+          showToast("Erro ao gerar PDF", "error");
+       });
+    };
+
     document.getElementById('btn-close-statement').onclick = () => document.getElementById('statement-modal').classList.add('hidden');
     
     document.getElementById('btn-print-action').onclick = () => window.print();
