@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>FinançasPro - O seu controle de saldo inteligente</title>
   
-  <!-- PWA Headers -->
   <link class="rounded-2xl" rel="apple-touch-icon" href="./icon-192.jpeg">
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0b1329">
@@ -14,19 +13,11 @@
   
   <link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="128" fill="%2310b981"/><path d="M372 140H140c-22 0-40 18-40 40v152c0 22 18 40 40 40h232c22 0 40-18 40-40V180c0-22-18-40-40-40zm-16 116h-96c-18 0-32-14-32-32s14-32 32-32h96c9 0 16 7 16 16v32c0 9-7 16-16 16z" fill="%23059669" opacity="0.3"/><path d="M368 160H144c-26.5 0-48 21.5-48 48v96c0 26.5 21.5 48 48 48h224c26.5 0 48-21.5 48-48v-96c0-26.5-21.5-48-48-48zm-16 112h-96c-17.7 0-32-14.3-32-32s14.3-32 32-32h96c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16z" fill="%23ffffff"/><circle cx="288" cy="240" r="12" fill="%2310b981"/></svg>'>
 
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- Chart.js para o Gráfico de Pizza -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- html2pdf para geração de PDF e compartilhamento -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -44,24 +35,11 @@
       -ms-overflow-style: none;
       scrollbar-width: none;
     }
-
-    .bg-panel-dark {
-      background-color: #080d1a !important;
-    }
-    .bg-card-dark {
-      background-color: #0d1527 !important;
-      border: 1px solid #16223f !important;
-    }
-    .bg-input-dark {
-      background-color: #060a12 !important;
-      border-color: #1e293b !important;
-    }
-    .text-green-accent {
-      color: #10b981 !important;
-    }
-    .text-red-accent {
-      color: #f43f5e !important;
-    }
+    .bg-panel-dark { background-color: #080d1a !important; }
+    .bg-card-dark { background-color: #0d1527 !important; border: 1px solid #16223f !important; }
+    .bg-input-dark { background-color: #060a12 !important; border-color: #1e293b !important; }
+    .text-green-accent { color: #10b981 !important; }
+    .text-red-accent { color: #f43f5e !important; }
 
     input:not(.bg-transparent), select, textarea {
       background-color: #060a12 !important;
@@ -105,27 +83,20 @@
     }
 
     @media print {
-      body * {
-        visibility: hidden;
-      }
-      #statement-modal, #statement-modal * {
-        visibility: visible;
-      }
+      body * { visibility: hidden; }
+      #statement-modal, #statement-modal * { visibility: visible; }
       #statement-modal {
         position: absolute !important;
         inset: 0 !important;
         width: 100%;
         background: white !important;
       }
-      .no-print {
-        display: none !important;
-      }
+      .no-print { display: none !important; }
     }
   </style>
 </head>
 <body class="bg-panel-dark text-slate-100 overflow-x-hidden relative min-h-screen font-sans flex flex-col items-center">
 
-  <!-- Glow Estético Ambient -->
   <div class="bg-emission w-80 h-80 bg-emerald-600/20 top-10 left-10"></div>
   <div class="bg-emission w-96 h-96 bg-blue-600/15 bottom-10 right-10"></div>
 
@@ -144,7 +115,7 @@
     </div>
   </div>
 
-  <!-- Toast Notification (Mensagens Flutuantes) -->
+  <!-- Toast Notification -->
   <div id="toast" class="hidden fixed top-6 left-1/2 -translate-x-1/2 z-[250] px-6 py-3.5 rounded-2xl shadow-2xl border flex items-center gap-3 transition-all duration-300 transform -translate-y-12 opacity-0 bg-slate-900/95 backdrop-blur-md">
     <div id="toast-icon-container" class="flex items-center justify-center">
       <i data-lucide="info" class="w-5 h-5"></i>
@@ -169,7 +140,6 @@
 
   <!-- MAIN APP CONTAINER -->
   <div id="app-screen" class="w-full max-w-6xl min-h-screen flex flex-col bg-panel-dark px-3 md:px-8 py-6 z-10">
-    
     <header class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 pb-6 border-b border-slate-850 no-print">
       <div class="flex items-center gap-3">
         <div class="bg-emerald-500 p-3 rounded-2xl shadow-lg shadow-emerald-500/20">
@@ -211,13 +181,11 @@
 
       <!-- ABA 1: PAINEL -->
       <section id="tab-dashboard" class="tab-content space-y-6 animate-in fade-in duration-300">
-        
-        <!-- Cartões de Resumos de Saldo -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="bg-card-dark p-6 rounded-3xl flex flex-col justify-between min-h-[140px] relative overflow-hidden">
             <div class="absolute top-0 right-0 w-32 h-32 blur-[80px] -mr-16 -mt-16 bg-blue-500/10"></div>
             <div>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Saldo Geral do M&ecirc;s</p>
+              <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Saldo Geral do Mês</p>
               <h2 id="kpi-balance" class="text-3xl font-extrabold text-white">R$ 0,00</h2>
             </div>
             <div class="flex items-center gap-1 text-[11px] text-white font-bold mt-4">
@@ -245,51 +213,20 @@
           </div>
         </div>
 
-        <!-- Seção Inferior: Gráfico, Contas & Atividade -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          <!-- Coluna Esquerda: Gráfico Pizza + Carteiras -->
           <div class="flex flex-col gap-6 lg:col-span-1">
-            
-            <!-- Gráfico de Valores Totais (Histórico Completo) -->
             <div class="bg-card-dark p-5 rounded-3xl flex flex-col items-center h-auto min-h-[280px]">
               <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">Balanço Histórico</h3>
               <div class="w-full flex-1 relative min-h-[200px]">
                  <canvas id="totalPieChart"></canvas>
               </div>
             </div>
-
           </div>
-
-          <!-- Coluna Direita: Minhas Economias (Atividade Recente) -->
-
-
-
-
-
-<div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-[520px] overflow-hidden">
-
-
-
-
-
-
+          <div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-[520px] overflow-hidden">
             <div class="flex justify-between items-center mb-6">
               <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Prestações</h3>
-              
             </div>
-
-
-
-
-
-<div class="flex-1 overflow-y-auto overflow-x-hidden">
-
-
-
-
-
-
+            <div class="flex-1 overflow-y-auto overflow-x-hidden">
               <table class="w-full text-left border-collapse min-w-[500px]">
                 <thead>
                   <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
@@ -305,13 +242,11 @@
               </table>
             </div>
           </div>
-
         </div>
       </section>
 
       <!-- ABA 2: LANÇAMENTOS (FORMULÁRIO DE ENTRADAS) -->
       <section id="tab-form" class="tab-content hidden max-w-xl mx-auto space-y-6 animate-in zoom-in-95 duration-200">
-        
         <div class="bg-card-dark p-6 rounded-3xl">
           <div class="flex items-center justify-end mb-6">
             <div class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800 select-none">
@@ -321,7 +256,6 @@
           </div>
 
           <form id="transaction-form" class="space-y-4">
-            
             <div class="bg-input-dark py-4 px-6 rounded-2xl border border-slate-800 flex items-center justify-between gap-4">
               <div class="flex flex-col flex-1">
                 <span class="text-[9px] font-black text-slate-550 uppercase tracking-widest mb-1">Qual o valor do lançamento?</span>
@@ -330,7 +264,6 @@
                   <input type="text" id="transaction-amount" inputmode="numeric" placeholder="0,00" class="bg-transparent text-3xl font-black text-white outline-none focus:outline-none border-0 p-0 w-full" required />
                 </div>
               </div>
-              <!-- 1. BOTÃO DA CALCULADORA ADICIONADO AO LADO DO INPUT DE VALOR -->
               <button type="button" id="btn-open-calculator" class="p-3.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl transition-all shadow-md shrink-0 border border-slate-700">
                 <i data-lucide="calculator" class="w-6 h-6"></i>
               </button>
@@ -355,7 +288,6 @@
                 </div>
               </div>
 
-              <!-- Novo layout do Mês (40%) / Conta Origem (60%) -->
               <div class="grid grid-cols-5 gap-3">
                 <div class="space-y-1 col-span-2"> 
                   <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mês Ref.</label>
@@ -395,44 +327,34 @@
         </div>
       </section>
 
-      <!-- ABA 3: HISTÓRICO (PROCURA E FILTROS) -->
+      <!-- ABA 3: HISTÓRICO -->
       <section id="tab-history" class="tab-content hidden space-y-6 animate-in fade-in duration-300">
-        
-        <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide" id="history-months-scroll">
-        </div>
-
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide" id="history-months-scroll"></div>
         <div class="flex justify-end mt-2">
           <button id="btn-history-view-statement" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl text-[10px] font-black uppercase transition-all shadow-md shadow-emerald-500/20">
             <i data-lucide="file-text" class="w-4 h-4"></i>
             Ver Extrato Geral
           </button>
         </div>
-
         <div class="bg-card-dark p-5 rounded-3xl space-y-4">
           <div class="relative">
             <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500"></i>
             <input type="text" id="search-trans-input" placeholder="Procure por descrição, categoria..." class="w-full pl-12 pr-10 py-3 bg-input-dark rounded-xl text-sm font-medium focus:outline-none" />
           </div>
-
           <div class="flex flex-wrap items-center gap-2 justify-between">
             <div class="flex bg-slate-900/65 p-1 rounded-xl border border-slate-800 text-center text-xs">
               <button id="filter-all" class="px-2.5 py-1.5 rounded-lg font-bold bg-slate-800 text-white transition-all">Todos</button>
               <button id="filter-expenses" class="px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white transition-all">Despesas</button>
               <button id="filter-incomes" class="px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white transition-all">Receitas</button>
             </div>
-            <!-- Totalizador movido para o lado direito da barra interna -->
             <div class="flex flex-col text-right">
                <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">Total Despesas</span>
                <span id="history-month-expense-total" class="text-xs font-black text-red-accent">R$ 0,00</span>
             </div>
           </div>
-          <!-- Filtro de Cartões no lugar do filtro de categorias -->
-          <div class="flex items-center gap-2 overflow-x-auto pt-2 border-t border-slate-800/50 max-w-full scrollbar-hide" id="history-card-filters">
-          </div>
+          <div class="flex items-center gap-2 overflow-x-auto pt-2 border-t border-slate-800/50 max-w-full scrollbar-hide" id="history-card-filters"></div>
         </div>
-
-        <div id="history-list" class="space-y-3">
-        </div>
+        <div id="history-list" class="space-y-3"></div>
       </section>
 
       <!-- ABA 4: AJUSTES -->
@@ -452,7 +374,6 @@
           </button>
         </div>
 
-        <!-- Seções Internas Ajustes -->
         <div id="settings-section-cards" class="space-y-4">
           <form id="form-add-card" class="bg-card-dark p-6 rounded-3xl space-y-4">
             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest font-bold">Criar Nova Conta Bancária</h3>
@@ -529,13 +450,10 @@
              </div>
              <p class="text-[10px] font-bold text-slate-500">Exporte ou importe os seus lançamentos em formato de planilha. Colunas: Tipo, Descrição, Categoria, Conta Origem, Forma de pagamento, Parcelamento, Valor, Data, Mês Ref.</p>
              <div class="grid grid-cols-2 gap-3">
-                <!-- Botão Importar CSV -->
                 <label for="import-csv-file" class="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl flex items-center justify-center gap-2 border border-slate-700 font-black uppercase tracking-wider text-[10px] cursor-pointer transition-all">
                    <i data-lucide="file-down" class="w-4 h-4"></i> Importar
                 </label>
                 <input type="file" id="import-csv-file" class="hidden" accept=".csv" />
-                
-                <!-- Botão Exportar CSV -->
                 <button type="button" id="btn-export-csv" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl flex items-center justify-center gap-2 shadow-lg font-black uppercase tracking-wider text-[10px]">
                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Exportar
                 </button>
@@ -634,7 +552,6 @@
         </div>
         <h3 class="text-white font-black uppercase text-xs tracking-widest mb-1">Opções do Lançamento</h3>
         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-6">Escolha o que pretende efetuar</p>
-        
         <div class="flex flex-col gap-2.5">
            <button type="button" id="btn-opt-edit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-2xl font-black text-[10px] uppercase shadow-lg font-bold">Editar</button>
            <button type="button" id="btn-opt-clone" class="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-2xl font-black text-[10px] uppercase border border-slate-700">Duplicar</button>
@@ -644,19 +561,17 @@
      </div>
   </div>
 
-  <!-- 2. MODAL VISUAL DA CALCULADORA (ADICIONADO LOGO ANTES DO <script>) -->
+  <!-- MODAL VISUAL DA CALCULADORA -->
   <div id="calculator-modal" class="hidden fixed inset-0 z-[220] bg-black/85 backdrop-blur-md flex items-center justify-center p-6">
      <div class="bg-card-dark w-full max-w-xs rounded-[2.5rem] p-6 shadow-2xl text-center">
         <div class="flex justify-between items-center mb-4">
            <h3 class="text-white font-black uppercase text-xs tracking-widest">Calculadora</h3>
            <button type="button" id="btn-close-calc" class="text-slate-400 hover:text-rose-400 transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
-        
         <div class="bg-input-dark p-4 rounded-2xl mb-4 text-right overflow-hidden shadow-inner border border-slate-800">
            <div id="calc-history" class="text-[10px] text-slate-500 font-bold h-4 mb-1 tracking-wider"></div>
            <div id="calc-display" class="text-3xl font-black text-white truncate">0</div>
         </div>
-
         <div class="grid grid-cols-4 gap-2">
            <button type="button" class="calc-btn p-3 bg-slate-800 text-rose-400 rounded-xl font-black text-lg" data-val="C">C</button>
            <button type="button" class="calc-btn p-3 bg-slate-800 text-slate-300 rounded-xl font-black text-lg" data-val="(">(</button>
@@ -682,10 +597,57 @@
            <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val=".">,</button>
            <button type="button" class="calc-btn p-3 bg-emerald-600 text-slate-955 rounded-xl font-black text-lg shadow-lg hover:bg-emerald-500 transition-colors" data-val="=">=</button>
         </div>
-        
         <button type="button" id="btn-use-calc-val" class="w-full mt-4 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-black text-[10px] uppercase tracking-wider shadow-lg transition-all">
            Usar Valor no Lançamento
         </button>
+     </div>
+  </div>
+
+  <!-- MODAL GERENCIAR CATEGORIAS RÁPIDO -->
+  <div id="quick-manage-cat-modal" class="hidden fixed inset-0 z-[230] bg-black/85 backdrop-blur-md flex items-center justify-center p-6">
+     <div class="bg-card-dark w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl flex flex-col max-h-[80vh]">
+        <div class="flex justify-between items-center mb-4">
+           <h3 class="text-white font-black uppercase text-xs tracking-widest">Categorias</h3>
+           <button type="button" id="btn-close-quick-cat" class="text-slate-400 hover:text-rose-400 transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <form id="form-quick-add-cat" class="flex gap-2 mb-4 shrink-0">
+           <input type="text" id="quick-new-cat-name" placeholder="Nova Categoria..." class="flex-1 p-3 bg-input-dark border border-slate-800 rounded-xl text-sm font-bold text-white outline-none focus:border-emerald-500/50 transition-colors" required />
+           <button type="submit" class="p-3 bg-emerald-600 hover:bg-emerald-500 transition-colors text-slate-955 rounded-xl font-black shadow-lg"><i data-lucide="plus" class="w-5 h-5"></i></button>
+        </form>
+        <div id="quick-cat-list" class="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-hide"></div>
+     </div>
+  </div>
+
+  <!-- MODAL GERENCIAR CONTAS RÁPIDO -->
+  <div id="quick-manage-cards-modal" class="hidden fixed inset-0 z-[230] bg-black/85 backdrop-blur-md flex items-center justify-center p-6">
+     <div class="bg-card-dark w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl flex flex-col max-h-[80vh]">
+        <div class="flex justify-between items-center mb-4">
+           <h3 class="text-white font-black uppercase text-xs tracking-widest">Contas Bancárias</h3>
+           <button type="button" id="btn-close-quick-cards" class="text-slate-400 hover:text-rose-400 transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <form id="form-quick-add-card" class="flex flex-col gap-2 mb-4 shrink-0">
+           <input type="text" id="quick-new-card-name" placeholder="Nova Conta..." class="w-full p-3 bg-input-dark border border-slate-800 rounded-xl text-sm font-bold text-white outline-none focus:border-emerald-500/50 transition-colors" required />
+           <div class="flex gap-2">
+              <input type="text" id="quick-new-card-details" placeholder="Ag./Conta (Opcional)" class="flex-1 p-3 bg-input-dark border border-slate-800 rounded-xl text-xs font-bold text-white outline-none focus:border-emerald-500/50 transition-colors" />
+              <button type="submit" class="p-3 bg-emerald-600 hover:bg-emerald-500 transition-colors text-slate-955 rounded-xl font-black shadow-lg"><i data-lucide="plus" class="w-5 h-5"></i></button>
+           </div>
+        </form>
+        <div id="quick-card-list" class="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-hide"></div>
+     </div>
+  </div>
+
+  <!-- MODAL GERENCIAR FORMAS DE PAGAMENTO RÁPIDO -->
+  <div id="quick-manage-methods-modal" class="hidden fixed inset-0 z-[230] bg-black/85 backdrop-blur-md flex items-center justify-center p-6">
+     <div class="bg-card-dark w-full max-w-sm rounded-[2.5rem] p-6 shadow-2xl flex flex-col max-h-[80vh]">
+        <div class="flex justify-between items-center mb-4">
+           <h3 class="text-white font-black uppercase text-xs tracking-widest">Formas de Pagamento</h3>
+           <button type="button" id="btn-close-quick-methods" class="text-slate-400 hover:text-rose-400 transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        <form id="form-quick-add-method" class="flex gap-2 mb-4 shrink-0">
+           <input type="text" id="quick-new-method-name" placeholder="Nova Forma..." class="flex-1 p-3 bg-input-dark border border-slate-800 rounded-xl text-sm font-bold text-white outline-none focus:border-emerald-500/50 transition-colors" required />
+           <button type="submit" class="p-3 bg-emerald-600 hover:bg-emerald-500 transition-colors text-slate-955 rounded-xl font-black shadow-lg"><i data-lucide="plus" class="w-5 h-5"></i></button>
+        </form>
+        <div id="quick-method-list" class="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-hide"></div>
      </div>
   </div>
 
@@ -717,7 +679,7 @@
     let isCloudConnected = false;
     let cloudUnsubscribe = null;
     let authUser = null;
-    let totalPieChartInstance = null; // Instância do Gráfico
+    let totalPieChartInstance = null;
 
     function formatBRL(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -749,13 +711,11 @@
     async function toggleExpensePaid(t, paid) {
        const original = state.transactions.find(item => item.id === t.id);
        if (!original) return;
-
        const monthKey = t.displayMonth || t.billingMonth;
        const paidMonths = { ...(original.paidMonths || {}) };
        paidMonths[monthKey] = paid;
-
        await DB.updateDoc(`transactions_${LOCAL_KEY}`, t.id, { paidMonths });
-       showToast(paid ? "Despesa marcada como paga!" : "Despesa marcada como nao paga!", paid ? "success" : "info");
+       showToast(paid ? "Despesa marcada como paga!" : "Despesa marcada como não paga!", paid ? "success" : "info");
     }
 
     function setupCurrencyMasks() {
@@ -763,7 +723,6 @@
           document.getElementById('transaction-amount'),
           document.getElementById('edit-trans-amount')
        ];
-
        inputs.forEach(input => {
           if (!input) return;
           input.addEventListener('input', (e) => {
@@ -1026,7 +985,6 @@
 
       let consolidated = 0;
       Object.values(cardBalances).forEach(b => consolidated += b);
-
       return { cardBalances, consolidated };
     }
 
@@ -1037,7 +995,6 @@
       let totalExpenseSum = 0;
       let unpaidExpenseSum = 0;
 
-      // Cálculo Mensal para KPIs Superiores
       const monthlyTransactions = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
       monthlyTransactions.forEach(t => {
         if (t.type === 'income') {
@@ -1066,7 +1023,6 @@
       document.getElementById('kpi-income').textContent = formatBRL(incomeSum);
       document.getElementById('kpi-expenses').textContent = formatBRL(unpaidExpenseSum);
 
-      // Renderizando Gráfico Pizza (Valores Históricos e não somente do mês)
       let allTimeIncome = 0;
       let allTimeExpense = 0;
       state.transactions.forEach(t => {
@@ -1096,9 +1052,7 @@
               options: {
                   responsive: true,
                   maintainAspectRatio: false,
-                  plugins: {
-                      legend: { display: false }
-                  },
+                  plugins: { legend: { display: false } },
                   scales: {
                       y: {
                           beginAtZero: true,
@@ -1114,7 +1068,6 @@
           });
       }
 
-      // Renderizando Minhas Economias (Tabela)
       const activityList = document.getElementById('dashboard-activity-list');
       if (activityList) {
           activityList.innerHTML = "";
@@ -1179,7 +1132,6 @@
          list = list.filter(t => t.description.toLowerCase().includes(state.searchQuery) || t.category.toLowerCase().includes(state.searchQuery));
       }
 
-      // Calcula o subtotal de despesas
       let subtotalExp = 0;
       list.forEach(t => {
          if (t.type === 'expense') {
@@ -1200,46 +1152,20 @@
          const formattedDate = t.date ? formatDate(t.date) : '';
          const div = document.createElement('div');
          
+         let bgClass = "bg-card-dark hover:bg-slate-900/60";
+         if (t.type === "expense" && t.category && t.category.toLowerCase() === "despesa fixa") {
+             bgClass = "bg-yellow-500/20 border border-yellow-400/40 hover:bg-yellow-500/30";
+         }
+         if (t.isInstallment) {
+             bgClass = "bg-blue-500/20 border border-blue-400/40 hover:bg-blue-500/30";
+         }
 
-
-
-
-
-let bgClass = "bg-card-dark hover:bg-slate-900/60";
-
-// Despesas Fixas
-if (
-    t.type === "expense" &&
-    t.category &&
-    t.category.toLowerCase() === "despesa fixa"
-) {
-    bgClass = "bg-yellow-500/20 border border-yellow-400/40 hover:bg-yellow-500/30";
-}
-
-// Parcelados
-if (t.isInstallment) {
-    bgClass = "bg-blue-500/20 border border-blue-400/40 hover:bg-blue-500/30";
-}
-
-div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center gap-4 transition-all cursor-pointer`;
-
-
-
-
-
-
-
-
-
-
+         div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center gap-4 transition-all cursor-pointer`;
          div.innerHTML = `
             <div class="flex items-center gap-3 flex-1 min-w-0">
-               <!-- Coluna do Ícone -->
                <div class="p-3 rounded-xl ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} shrink-0">
                   <i data-lucide="${isIncome ? 'trending-up' : 'trending-down'}" class="w-4 h-4"></i>
                </div>
-               
-               <!-- Descrição, Categoria, Conta e Parcela -->
                <div class="min-w-0 flex-1">
                   <p class="text-xs font-bold text-white uppercase truncate">${t.description}</p>
                   <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[9px] font-black text-slate-550">
@@ -1251,11 +1177,10 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
             </div>
             
             <div class="shrink-0 flex items-center gap-3">
-               <!-- Valores, Data e Botão de Pagamento -->
                <div class="shrink-0 flex flex-col items-end gap-1 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
                    <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : (isPaid ? 'text-blue-400' : 'text-red-accent')} select-none"> ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)} </div> 
-                  ${!isIncome ? `<button type="button" class="payment-toggle mt-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border transition-all shadow-md ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500 shadow-emerald-900/20' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como nao pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
+                  ${!isIncome ? `<button type="button" class="payment-toggle mt-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border transition-all shadow-md ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500 shadow-emerald-900/20' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como não pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
                </div>
             </div>
          `;
@@ -1420,6 +1345,10 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
           opt.textContent = c.name;
           catSel.appendChild(opt);
        });
+       const manageOptCat = document.createElement('option');
+       manageOptCat.value = "__MANAGE__";
+       manageOptCat.textContent = "+ Nova / Editar...";
+       catSel.appendChild(manageOptCat);
 
        const cardSel = document.getElementById('transaction-card');
        cardSel.innerHTML = '<option value="">Sem Conta / Geral</option>';
@@ -1429,6 +1358,10 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
           opt.textContent = c.name.toUpperCase();
           cardSel.appendChild(opt);
        });
+       const manageOptCard = document.createElement('option');
+       manageOptCard.value = "__MANAGE__";
+       manageOptCard.textContent = "+ Nova / Editar...";
+       cardSel.appendChild(manageOptCard);
 
        const methodSel = document.getElementById('transaction-method');
        methodSel.innerHTML = '';
@@ -1438,6 +1371,10 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
           opt.textContent = m.name;
           methodSel.appendChild(opt);
        });
+       const manageOptMethod = document.createElement('option');
+       manageOptMethod.value = "__MANAGE__";
+       manageOptMethod.textContent = "+ Nova / Editar...";
+       methodSel.appendChild(manageOptMethod);
     }
 
     function renderAll() {
@@ -1518,6 +1455,10 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
           if(c.name === t.category) opt.selected = true;
           catSelect.appendChild(opt);
        });
+       const manageOptCatEdit = document.createElement('option');
+       manageOptCatEdit.value = "__MANAGE__";
+       manageOptCatEdit.textContent = "+ Nova / Editar...";
+       catSelect.appendChild(manageOptCatEdit);
 
        const monthSelect = document.getElementById('edit-trans-month');
        monthSelect.innerHTML = '';
@@ -1542,6 +1483,10 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
           if(m.name === t.paymentMethod) opt.selected = true;
           methodSelect.appendChild(opt);
        });
+       const manageOptMethodEdit = document.createElement('option');
+       manageOptMethodEdit.value = "__MANAGE__";
+       manageOptMethodEdit.textContent = "+ Nova / Editar...";
+       methodSelect.appendChild(manageOptMethodEdit);
 
        const cardSelect = document.getElementById('edit-trans-card');
        cardSelect.innerHTML = '<option value="">Sem Conta</option>';
@@ -1552,6 +1497,10 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
           if(c.name === t.cardUsed) opt.selected = true;
           cardSelect.appendChild(opt);
        });
+       const manageOptCardEdit = document.createElement('option');
+       manageOptCardEdit.value = "__MANAGE__";
+       manageOptCardEdit.textContent = "+ Nova / Editar...";
+       cardSelect.appendChild(manageOptCardEdit);
 
        document.getElementById('edit-transaction-modal').classList.remove('hidden');
     }
@@ -1762,6 +1711,355 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
        initFirebase();
     };
 
+    document.getElementById('transaction-category').addEventListener('change', (e) => {
+        if (e.target.value === '__MANAGE__') {
+            e.target.value = "";
+            openManageCatModal();
+        }
+    });
+
+    document.getElementById('edit-trans-category').addEventListener('change', (e) => {
+        if (e.target.value === '__MANAGE__') {
+            e.target.value = "";
+            openManageCatModal();
+        }
+    });
+
+    function openManageCatModal() {
+       document.getElementById('quick-manage-cat-modal').classList.remove('hidden');
+       renderQuickCatList();
+    }
+
+    document.getElementById('btn-close-quick-cat').onclick = () => {
+       document.getElementById('quick-manage-cat-modal').classList.add('hidden');
+       populateFormSelects(); 
+       renderFidCategories(); 
+    };
+
+    document.getElementById('form-quick-add-cat').onsubmit = async (e) => {
+       e.preventDefault();
+       const input = document.getElementById('quick-new-cat-name');
+       const name = input.value.trim();
+       if (!name) return;
+       
+       await DB.addDoc(`categories_${LOCAL_KEY}`, { name, type: state.activeType, budget: 0 });
+       input.value = '';
+       showToast("Categoria adicionada!", "success");
+       renderQuickCatList();
+       populateFormSelects();
+    };
+
+    window.deleteQuickCategory = function(id, name) {
+       showConfirm("Remover", `Remover a categoria ${name}?`, async () => {
+          await DB.deleteDoc(`categories_${LOCAL_KEY}`, id);
+          showToast("Categoria removida!", "success");
+          renderQuickCatList();
+          populateFormSelects();
+       });
+    };
+
+    window.editQuickCategory = function(id, oldName) {
+       const itemDiv = document.getElementById(`quick-cat-item-${id}`);
+       itemDiv.innerHTML = `
+          <input type="text" id="edit-cat-input-${id}" value="${oldName}" class="flex-1 p-2 bg-input-dark border border-slate-700 rounded-lg text-xs font-bold text-white outline-none focus:border-emerald-500" />
+          <button type="button" onclick="saveQuickCategory('${id}', '${oldName}')" class="p-2 bg-emerald-600 hover:bg-emerald-500 transition-colors text-slate-955 rounded-lg shadow-md"><i data-lucide="check" class="w-4 h-4"></i></button>
+       `;
+       if (typeof lucide !== 'undefined') lucide.createIcons();
+       const input = document.getElementById(`edit-cat-input-${id}`);
+       input.focus();
+       input.setSelectionRange(0, input.value.length);
+    };
+
+    window.saveQuickCategory = async function(id, oldName) {
+       const newName = document.getElementById(`edit-cat-input-${id}`).value.trim();
+       if (!newName || newName === oldName) {
+           renderQuickCatList();
+           return;
+       }
+       
+       await DB.updateDoc(`categories_${LOCAL_KEY}`, id, { name: newName });
+       
+       let localTxs = getLocalCollection(`transactions_${LOCAL_KEY}`);
+       let changed = false;
+       localTxs = localTxs.map(t => {
+           if (t.category === oldName) {
+               changed = true;
+               return { ...t, category: newName };
+           }
+           return t;
+       });
+       
+       if (changed) {
+           localStorage.setItem(`transactions_${LOCAL_KEY}`, JSON.stringify(localTxs));
+           syncStateFromLocal();
+           if (state.sharingCode) DB.syncToCloud();
+       }
+       
+       showToast("Categoria atualizada!", "success");
+       renderQuickCatList();
+       populateFormSelects();
+       if (state.activeTab === 'history' || state.activeTab === 'dashboard') renderAll();
+    };
+
+    function renderQuickCatList() {
+       const container = document.getElementById('quick-cat-list');
+       container.innerHTML = '';
+       
+       const cats = state.customCategories.filter(c => c.type === state.activeType);
+       if (cats.length === 0) {
+          container.innerHTML = `<p class="text-center text-[10px] uppercase font-bold text-slate-500 py-4">Nenhuma categoria</p>`;
+          return;
+       }
+       
+       cats.forEach(c => {
+          const div = document.createElement('div');
+          div.className = "flex items-center justify-between p-3 bg-slate-800/60 rounded-xl border border-slate-700/50 transition-all";
+          div.id = `quick-cat-item-${c.id}`;
+          div.innerHTML = `
+             <span class="text-xs font-bold text-white uppercase truncate pr-2">${c.name}</span>
+             <div class="flex gap-1.5 shrink-0">
+                <button type="button" onclick="editQuickCategory('${c.id}', '${c.name.replace(/'/g, "\\'")}')" class="p-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-800 bg-slate-900 rounded-lg transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="deleteQuickCategory('${c.id}', '${c.name.replace(/'/g, "\\'")}')" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 bg-slate-900 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+             </div>
+          `;
+          container.appendChild(div);
+       });
+       if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    document.getElementById('transaction-card').addEventListener('change', (e) => {
+        if (e.target.value === '__MANAGE__') {
+            e.target.value = "";
+            openManageCardsModal();
+        }
+    });
+
+    document.getElementById('edit-trans-card').addEventListener('change', (e) => {
+        if (e.target.value === '__MANAGE__') {
+            e.target.value = "";
+            openManageCardsModal();
+        }
+    });
+
+    function openManageCardsModal() {
+       document.getElementById('quick-manage-cards-modal').classList.remove('hidden');
+       renderQuickCardList();
+    }
+
+    document.getElementById('btn-close-quick-cards').onclick = () => {
+       document.getElementById('quick-manage-cards-modal').classList.add('hidden');
+       populateFormSelects(); 
+       renderFidCards(); 
+    };
+
+    document.getElementById('form-quick-add-card').onsubmit = async (e) => {
+       e.preventDefault();
+       const name = document.getElementById('quick-new-card-name').value.trim();
+       const details = document.getElementById('quick-new-card-details').value.trim();
+       if (!name) return;
+       
+       await DB.addDoc(`cards_${LOCAL_KEY}`, { name, details, initial: 0 });
+       document.getElementById('quick-new-card-name').value = '';
+       document.getElementById('quick-new-card-details').value = '';
+       showToast("Conta adicionada!", "success");
+       renderQuickCardList();
+       populateFormSelects();
+    };
+
+    window.deleteQuickCard = function(id, name) {
+       showConfirm("Remover", `Remover a conta ${name}?`, async () => {
+          await DB.deleteDoc(`cards_${LOCAL_KEY}`, id);
+          showToast("Conta removida!", "success");
+          renderQuickCardList();
+          populateFormSelects();
+       });
+    };
+
+    window.editQuickCard = function(id, oldName) {
+       const itemDiv = document.getElementById(`quick-card-item-${id}`);
+       itemDiv.innerHTML = `
+          <input type="text" id="edit-card-input-${id}" value="${oldName}" class="flex-1 p-2 bg-input-dark border border-slate-700 rounded-lg text-xs font-bold text-white outline-none focus:border-emerald-500" />
+          <button type="button" onclick="saveQuickCard('${id}', '${oldName}')" class="p-2 bg-emerald-600 hover:bg-emerald-500 transition-colors text-slate-955 rounded-lg shadow-md"><i data-lucide="check" class="w-4 h-4"></i></button>
+       `;
+       if (typeof lucide !== 'undefined') lucide.createIcons();
+       const input = document.getElementById(`edit-card-input-${id}`);
+       input.focus();
+       input.setSelectionRange(0, input.value.length);
+    };
+
+    window.saveQuickCard = async function(id, oldName) {
+       const newName = document.getElementById(`edit-card-input-${id}`).value.trim();
+       if (!newName || newName === oldName) {
+           renderQuickCardList();
+           return;
+       }
+       
+       await DB.updateDoc(`cards_${LOCAL_KEY}`, id, { name: newName });
+       
+       let localTxs = getLocalCollection(`transactions_${LOCAL_KEY}`);
+       let changed = false;
+       localTxs = localTxs.map(t => {
+           if (t.cardUsed === oldName) {
+               changed = true;
+               return { ...t, cardUsed: newName };
+           }
+           return t;
+       });
+       
+       if (changed) {
+           localStorage.setItem(`transactions_${LOCAL_KEY}`, JSON.stringify(localTxs));
+           syncStateFromLocal();
+           if (state.sharingCode) DB.syncToCloud();
+       }
+       
+       showToast("Conta atualizada!", "success");
+       renderQuickCardList();
+       populateFormSelects();
+       if (state.activeTab === 'history' || state.activeTab === 'dashboard') renderAll();
+    };
+
+    function renderQuickCardList() {
+       const container = document.getElementById('quick-card-list');
+       container.innerHTML = '';
+       
+       if (state.customCards.length === 0) {
+          container.innerHTML = `<p class="text-center text-[10px] uppercase font-bold text-slate-500 py-4">Nenhuma conta</p>`;
+          return;
+       }
+       
+       state.customCards.forEach(c => {
+          const div = document.createElement('div');
+          div.className = "flex items-center justify-between p-3 bg-slate-800/60 rounded-xl border border-slate-700/50 transition-all";
+          div.id = `quick-card-item-${c.id}`;
+          div.innerHTML = `
+             <div class="min-w-0 flex-1 pr-2">
+                 <div class="text-xs font-bold text-white uppercase truncate">${c.name}</div>
+                 ${c.details ? `<div class="text-[9px] text-slate-400 truncate">${c.details}</div>` : ''}
+             </div>
+             <div class="flex gap-1.5 shrink-0">
+                <button type="button" onclick="editQuickCard('${c.id}', '${c.name.replace(/'/g, "\\'")}')" class="p-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-800 bg-slate-900 rounded-lg transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="deleteQuickCard('${c.id}', '${c.name.replace(/'/g, "\\'")}')" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 bg-slate-900 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+             </div>
+          `;
+          container.appendChild(div);
+       });
+       if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    document.getElementById('transaction-method').addEventListener('change', (e) => {
+        if (e.target.value === '__MANAGE__') {
+            e.target.value = "";
+            openManageMethodsModal();
+        }
+    });
+
+    document.getElementById('edit-trans-method').addEventListener('change', (e) => {
+        if (e.target.value === '__MANAGE__') {
+            e.target.value = "";
+            openManageMethodsModal();
+        }
+    });
+
+    function openManageMethodsModal() {
+       document.getElementById('quick-manage-methods-modal').classList.remove('hidden');
+       renderQuickMethodList();
+    }
+
+    document.getElementById('btn-close-quick-methods').onclick = () => {
+       document.getElementById('quick-manage-methods-modal').classList.add('hidden');
+       populateFormSelects(); 
+    };
+
+    document.getElementById('form-quick-add-method').onsubmit = async (e) => {
+       e.preventDefault();
+       const input = document.getElementById('quick-new-method-name');
+       const name = input.value.trim().toUpperCase(); 
+       if (!name) return;
+       
+       await DB.addDoc(`methods_${LOCAL_KEY}`, { name });
+       input.value = '';
+       showToast("Forma de pagamento adicionada!", "success");
+       renderQuickMethodList();
+       populateFormSelects();
+    };
+
+    window.deleteQuickMethod = function(id, name) {
+       showConfirm("Remover", `Remover a forma ${name}?`, async () => {
+          await DB.deleteDoc(`methods_${LOCAL_KEY}`, id);
+          showToast("Forma removida!", "success");
+          renderQuickMethodList();
+          populateFormSelects();
+       });
+    };
+
+    window.editQuickMethod = function(id, oldName) {
+       const itemDiv = document.getElementById(`quick-method-item-${id}`);
+       itemDiv.innerHTML = `
+          <input type="text" id="edit-method-input-${id}" value="${oldName}" class="flex-1 p-2 bg-input-dark border border-slate-700 rounded-lg text-xs font-bold text-white outline-none focus:border-emerald-500 uppercase" />
+          <button type="button" onclick="saveQuickMethod('${id}', '${oldName}')" class="p-2 bg-emerald-600 hover:bg-emerald-500 transition-colors text-slate-955 rounded-lg shadow-md"><i data-lucide="check" class="w-4 h-4"></i></button>
+       `;
+       if (typeof lucide !== 'undefined') lucide.createIcons();
+       const input = document.getElementById(`edit-method-input-${id}`);
+       input.focus();
+       input.setSelectionRange(0, input.value.length);
+    };
+
+    window.saveQuickMethod = async function(id, oldName) {
+       const newName = document.getElementById(`edit-method-input-${id}`).value.trim().toUpperCase();
+       if (!newName || newName === oldName) {
+           renderQuickMethodList();
+           return;
+       }
+       
+       await DB.updateDoc(`methods_${LOCAL_KEY}`, id, { name: newName });
+       
+       let localTxs = getLocalCollection(`transactions_${LOCAL_KEY}`);
+       let changed = false;
+       localTxs = localTxs.map(t => {
+           if (t.paymentMethod === oldName) {
+               changed = true;
+               return { ...t, paymentMethod: newName };
+           }
+           return t;
+       });
+       
+       if (changed) {
+           localStorage.setItem(`transactions_${LOCAL_KEY}`, JSON.stringify(localTxs));
+           syncStateFromLocal();
+           if (state.sharingCode) DB.syncToCloud();
+       }
+       
+       showToast("Forma atualizada!", "success");
+       renderQuickMethodList();
+       populateFormSelects();
+       if (state.activeTab === 'history' || state.activeTab === 'dashboard') renderAll();
+    };
+
+    function renderQuickMethodList() {
+       const container = document.getElementById('quick-method-list');
+       container.innerHTML = '';
+       
+       if (state.customMethods.length === 0) {
+          container.innerHTML = `<p class="text-center text-[10px] uppercase font-bold text-slate-500 py-4">Nenhuma forma de pagamento</p>`;
+          return;
+       }
+       
+       state.customMethods.forEach(m => {
+          const div = document.createElement('div');
+          div.className = "flex items-center justify-between p-3 bg-slate-800/60 rounded-xl border border-slate-700/50 transition-all";
+          div.id = `quick-method-item-${m.id}`;
+          div.innerHTML = `
+             <span class="text-xs font-bold text-white uppercase truncate pr-2">${m.name}</span>
+             <div class="flex gap-1.5 shrink-0">
+                <button type="button" onclick="editQuickMethod('${m.id}', '${m.name.replace(/'/g, "\\'")}')" class="p-2 text-slate-400 hover:text-emerald-400 hover:bg-slate-800 bg-slate-900 rounded-lg transition-colors"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                <button type="button" onclick="deleteQuickMethod('${m.id}', '${m.name.replace(/'/g, "\\'")}')" class="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 bg-slate-900 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+             </div>
+          `;
+          container.appendChild(div);
+       });
+       if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
     document.getElementById('filter-all').onclick = () => {
        state.filterType = 'all';
        document.getElementById('filter-all').className = "px-2.5 py-1.5 rounded-lg font-bold bg-slate-800 text-white";
@@ -1855,8 +2153,6 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
           showToast("Nenhum dado para exportar!", "error");
           return;
        }
-
-       // Inclui a coluna "Tipo" no início
        const headers = ["Tipo", "Descrição", "Categoria", "Conta Origem", "Forma de pagamento", "Parcelamento", "Valor", "Data", "Mês Ref"];
        const rows = state.transactions.map(t => {
           const tipo = `"${t.type === 'income' ? 'Receita' : 'Despesa'}"`;
@@ -1909,7 +2205,6 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
                  }
                  if (row.length > 0 && row[row.length-1] === '') row.pop();
 
-                 // Leitura da nova estrutura com a coluna Tipo na primeira posição
                  if (row.length >= 8) {
                     const tipoRaw = row[0] ? row[0].trim().toUpperCase() : 'DESPESA';
                     const type = (tipoRaw === 'RECEITA') ? 'income' : 'expense';
@@ -1952,7 +2247,7 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
                  renderAll();
                  showToast(`${importedCount} lançamentos importados com sucesso!`, "success");
               } else {
-                 showToast("Nenhum dado pôde ser importado (verifique se o formato CSV está correto).", "error");
+                 showToast("Nenhum dado pôde ser importado.", "error");
               }
           } catch (err) {
               console.error(err);
@@ -1972,7 +2267,7 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
        });
     };
 
-   function handleViewStatement() {
+    function handleViewStatement() {
        let list = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
 
        if (state.filterType !== 'all') {
@@ -2078,7 +2373,7 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
              a.download = filename;
              a.click();
              URL.revokeObjectURL(url);
-             showToast("PDF salvo (Menu de partilha indisponível no dispositivo).", "success");
+             showToast("PDF salvo com sucesso.", "success");
           }
        }).catch(err => {
           console.error(err);
@@ -2182,7 +2477,6 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
         }
     };
 
-    // 3. LÓGICA JAVASCRIPT DA CALCULADORA (ADICIONADA LOGO ANTES DO initApp)
     let calcExpression = "";
     
     document.querySelectorAll('.calc-btn').forEach(btn => {
@@ -2238,7 +2532,6 @@ div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center ga
         }
         document.getElementById('calculator-modal').classList.add('hidden');
     };
-    // -----------------------------
 
     function initApp() {
        syncStateFromLocal();
