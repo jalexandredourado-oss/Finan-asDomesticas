@@ -262,13 +262,34 @@
           </div>
 
           <!-- Coluna Direita: Minhas Economias (Atividade Recente) -->
-          <div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-full min-h-[350px]">
+
+
+
+
+
+<div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-[520px] overflow-hidden">
+
+
+
+
+
+
             <div class="flex justify-between items-center mb-6">
               <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Prestações</h3>
               
             </div>
 
-            <div class="flex-1 overflow-x-auto">
+
+
+
+
+<div class="flex-1 overflow-y-auto overflow-x-hidden">
+
+
+
+
+
+
               <table class="w-full text-left border-collapse min-w-[500px]">
                 <thead>
                   <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
@@ -1179,7 +1200,38 @@
          const formattedDate = t.date ? formatDate(t.date) : '';
          const div = document.createElement('div');
          
-         div.className = "bg-card-dark p-4 rounded-2xl flex justify-between items-center gap-4 hover:bg-slate-900/60 transition-all cursor-pointer";
+
+
+
+
+
+let bgClass = "bg-card-dark hover:bg-slate-900/60";
+
+// Despesas Fixas
+if (
+    t.type === "expense" &&
+    t.category &&
+    t.category.toLowerCase() === "despesa fixa"
+) {
+    bgClass = "bg-yellow-500/20 border border-yellow-400/40 hover:bg-yellow-500/30";
+}
+
+// Parcelados
+if (t.isInstallment) {
+    bgClass = "bg-blue-500/20 border border-blue-400/40 hover:bg-blue-500/30";
+}
+
+div.className = `${bgClass} p-4 rounded-2xl flex justify-between items-center gap-4 transition-all cursor-pointer`;
+
+
+
+
+
+
+
+
+
+
          div.innerHTML = `
             <div class="flex items-center gap-3 flex-1 min-w-0">
                <!-- Coluna do Ícone -->
