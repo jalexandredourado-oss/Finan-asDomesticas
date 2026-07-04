@@ -330,13 +330,13 @@
                 </div>
               </div>
 
-              <!-- Nova Grid 5 colunas para Mês e Conta Origem -->
+              <!-- Novo layout do Mês (40%) / Conta Origem (60%) -->
               <div class="grid grid-cols-5 gap-3">
-                <div class="space-y-1 col-span-2"> <!-- Mês ocupa 2 de 5 partes -->
+                <div class="space-y-1 col-span-2"> 
                   <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Mês Ref.</label>
                   <select id="transaction-month" class="w-full p-3.5 rounded-xl font-bold text-xs"></select>
                 </div>
-                <div class="space-y-1 col-span-3"> <!-- Conta ocupa 3 de 5 partes -->
+                <div class="space-y-1 col-span-3"> 
                   <label id="lbl-card-origem" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Conta Origem</label>
                   <select id="transaction-card" class="w-full p-3.5 rounded-xl font-bold text-xs">
                   </select>
@@ -376,7 +376,7 @@
         <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide" id="history-months-scroll">
         </div>
 
-        <div class="flex justify-end mt-2 px-1">
+        <div class="flex justify-end mt-2">
           <button id="btn-history-view-statement" class="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl text-[10px] font-black uppercase transition-all shadow-md shadow-emerald-500/20">
             <i data-lucide="file-text" class="w-4 h-4"></i>
             Ver Extrato Geral
@@ -395,15 +395,14 @@
               <button id="filter-expenses" class="px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white transition-all">Despesas</button>
               <button id="filter-incomes" class="px-2.5 py-1.5 rounded-lg font-bold text-slate-500 hover:text-white transition-all">Receitas</button>
             </div>
-            
+            <!-- Totalizador movido para o lado direito da barra interna -->
             <div class="flex flex-col text-right">
                <span class="text-[8px] font-black text-slate-500 uppercase tracking-widest">Total Despesas</span>
                <span id="history-month-expense-total" class="text-xs font-black text-red-accent">R$ 0,00</span>
             </div>
           </div>
-          
-          <!-- Filtro Dinâmico de Cartões -->
-          <div class="flex items-center gap-2 overflow-x-auto pt-2 pb-1 max-w-full scrollbar-hide border-t border-slate-800" id="history-card-filters">
+          <!-- Filtro de Cartões no lugar do filtro de categorias -->
+          <div class="flex items-center gap-2 overflow-x-auto pt-2 border-t border-slate-800/50 max-w-full scrollbar-hide" id="history-card-filters">
           </div>
         </div>
 
@@ -413,7 +412,7 @@
 
       <!-- ABA 4: AJUSTES -->
       <section id="tab-settings" class="tab-content hidden max-w-2xl mx-auto space-y-6 animate-in fade-in duration-200">
-        <div class="flex gap-1 p-1 bg-card-dark rounded-xl border border-slate-800">
+        <div class="grid grid-cols-2 md:flex gap-1 p-1 bg-card-dark rounded-xl border border-slate-800">
           <button id="settings-tab-cards" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 flex items-center justify-center gap-1">
             <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Contas
           </button>
@@ -422,6 +421,9 @@
           </button>
           <button id="settings-tab-sync" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1">
             <i data-lucide="cloud" class="w-3.5 h-3.5"></i> Partilha Nuvem
+          </button>
+          <button id="settings-tab-data" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1">
+            <i data-lucide="arrow-down-up" class="w-3.5 h-3.5"></i> Importar/Exportar
           </button>
         </div>
 
@@ -488,10 +490,31 @@
              <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Backup & Limpeza</h3>
              <div class="grid grid-cols-2 gap-3">
                 <button type="button" id="btn-export-backup" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200">Exportar</button>
-                <label for="import-backup-file" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200 text-center cursor-pointer">Importar</label>
+                <label for="import-backup-file" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200 text-center cursor-pointer">Importar JSON</label>
                 <input type="file" id="import-backup-file" class="hidden" accept=".json" />
              </div>
              <button type="button" id="btn-danger-reset" class="w-full py-3 bg-rose-955 text-rose-400 border border-rose-900/30 rounded-xl font-bold text-xs uppercase">Apagar Dados</button>
+          </div>
+        </div>
+
+        <div id="settings-section-data" class="hidden space-y-4">
+          <div class="bg-card-dark p-6 rounded-3xl space-y-4">
+             <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Planilha de Dados (CSV)</h3>
+             </div>
+             <p class="text-[10px] font-bold text-slate-500">Exporte ou importe os seus lançamentos em formato de planilha. Colunas: Descrição, Categoria, Conta Origem, Forma de pagamento, Parcelamento e Valor.</p>
+             <div class="grid grid-cols-2 gap-3">
+                <!-- Botão Importar CSV -->
+                <label for="import-csv-file" class="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl flex items-center justify-center gap-2 border border-slate-700 font-black uppercase tracking-wider text-[10px] cursor-pointer transition-all">
+                   <i data-lucide="file-down" class="w-4 h-4"></i> Importar
+                </label>
+                <input type="file" id="import-csv-file" class="hidden" accept=".csv" />
+                
+                <!-- Botão Exportar CSV -->
+                <button type="button" id="btn-export-csv" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl flex items-center justify-center gap-2 shadow-lg font-black uppercase tracking-wider text-[10px]">
+                   <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Exportar
+                </button>
+             </div>
           </div>
         </div>
       </section>
@@ -613,9 +636,8 @@
       activeType: 'expense', 
       isInstallment: false,
       searchQuery: '',
-      filterCategory: 'all',
+      filterCard: 'all', 
       filterType: 'all', 
-      filterCard: 'all',
       sharingCode: '',
       firebaseConfig: null
     };
@@ -1087,17 +1109,15 @@
          list = list.filter(t => t.description.toLowerCase().includes(state.searchQuery) || t.category.toLowerCase().includes(state.searchQuery));
       }
 
-      // Calcula subtotal dinâmico de Despesas e atualiza interface
-      let monthExpenseTotal = 0;
+      // Calcula o subtotal de despesas
+      let subtotalExp = 0;
       list.forEach(t => {
          if (t.type === 'expense') {
-            monthExpenseTotal += t.displayAmount;
+            subtotalExp += t.displayAmount;
          }
       });
-      const totalEl = document.getElementById('history-month-expense-total');
-      if (totalEl) {
-         totalEl.textContent = formatBRL(monthExpenseTotal);
-      }
+      const elTotal = document.getElementById('history-month-expense-total');
+      if (elTotal) elTotal.textContent = formatBRL(subtotalExp);
 
       if (list.length === 0) {
          container.innerHTML = `<p class="text-center py-12 text-[10px] uppercase font-black text-slate-600">Nenhum registro encontrado</p>`;
@@ -1113,9 +1133,12 @@
          div.className = "bg-card-dark p-4 rounded-2xl flex justify-between items-center gap-4 hover:bg-slate-900/60 transition-all cursor-pointer";
          div.innerHTML = `
             <div class="flex items-center gap-3 flex-1 min-w-0">
+               <!-- Coluna do Ícone -->
                <div class="p-3 rounded-xl ${isIncome ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'} shrink-0">
                   <i data-lucide="${isIncome ? 'trending-up' : 'trending-down'}" class="w-4 h-4"></i>
                </div>
+               
+               <!-- Descrição, Categoria, Conta e Parcela -->
                <div class="min-w-0 flex-1">
                   <p class="text-xs font-bold text-white uppercase truncate">${t.description}</p>
                   <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[9px] font-black text-slate-550">
@@ -1127,9 +1150,10 @@
             </div>
             
             <div class="shrink-0 flex items-center gap-3">
+               <!-- Valores, Data e Botão de Pagamento -->
                <div class="shrink-0 flex flex-col items-end gap-1 text-right">
                   ${formattedDate ? `<span class="text-[10px] font-black text-slate-400 uppercase">${formattedDate}</span>` : ''}
-                  <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : (isPaid ? 'text-blue-400' : 'text-red-accent')} select-none"> ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)} </div> 
+                   <div class="text-sm font-black whitespace-nowrap ${isIncome ? 'text-green-accent' : (isPaid ? 'text-blue-400' : 'text-red-accent')} select-none"> ${isIncome || isPaid ? '+' : '-'} ${formatBRL(t.displayAmount)} </div> 
                   ${!isIncome ? `<button type="button" class="payment-toggle mt-1 px-3 py-1 rounded-lg text-[8px] font-black uppercase border transition-all shadow-md ${isPaid ? 'bg-emerald-600 text-slate-950 border-emerald-500 shadow-emerald-900/20' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'}" title="${isPaid ? 'Marcar como nao pago' : 'Marcar como pago'}">${isPaid ? 'Pago' : 'Pagar'}</button>` : ''}
                </div>
             </div>
@@ -1183,6 +1207,28 @@
           btn.onclick = () => { state.selectedMonth = m; renderMonthsScroll(); renderHistory(); };
           container.appendChild(btn);
        });
+    }
+
+    function renderHistoryCardFilters() {
+       const container = document.getElementById('history-card-filters');
+       if (!container) return;
+       container.innerHTML = '';
+       
+       const all = document.createElement('button');
+       all.innerHTML = `<i data-lucide="wallet" class="w-3 h-3"></i> Todas as Contas`;
+       all.className = `flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border ${state.filterCard === 'all' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'}`;
+       all.onclick = () => { state.filterCard = 'all'; renderHistoryCardFilters(); renderHistory(); };
+       container.appendChild(all);
+
+       const unique = [...new Set(state.transactions.map(t => t.cardUsed || 'Sem Conta'))];
+       unique.forEach(c => {
+          const btn = document.createElement('button');
+          btn.textContent = c;
+          btn.className = `px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border ${state.filterCard === c ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-slate-300'}`;
+          btn.onclick = () => { state.filterCard = c; renderHistoryCardFilters(); renderHistory(); };
+          container.appendChild(btn);
+       });
+       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     function renderFidCategories() {
@@ -1291,29 +1337,6 @@
           opt.textContent = m.name;
           methodSel.appendChild(opt);
        });
-    }
-
-    function renderHistoryCardFilters() {
-       const container = document.getElementById('history-card-filters');
-       if (!container) return;
-       container.innerHTML = '';
-       
-       const all = document.createElement('button');
-       all.innerHTML = '<i data-lucide="wallet" class="w-3 h-3"></i> Todas';
-       all.className = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border ${state.filterCard === 'all' ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
-       all.onclick = () => { state.filterCard = 'all'; renderHistoryCardFilters(); renderHistory(); };
-       container.appendChild(all);
-
-       const unique = [...new Set(state.transactions.map(t => t.cardUsed || 'Sem Conta'))];
-       unique.forEach(c => {
-          const btn = document.createElement('button');
-          btn.innerHTML = `<i data-lucide="credit-card" class="w-3 h-3"></i> ${c}`;
-          btn.className = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-wider whitespace-nowrap border ${state.filterCard === c ? 'bg-blue-600 border-blue-500 text-white shadow-lg' : 'bg-slate-900 border-slate-800 text-slate-500'}`;
-          btn.onclick = () => { state.filterCard = c; renderHistoryCardFilters(); renderHistory(); };
-          container.appendChild(btn);
-       });
-
-       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
     function renderAll() {
@@ -1528,8 +1551,8 @@
 
     document.getElementById('btn-type-expense').onclick = () => {
        state.activeType = 'expense';
-       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white";
-       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
+       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white transition-all";
+       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all";
        document.getElementById('btn-submit-transaction').className = "w-full py-4 mt-2 bg-rose-600 hover:bg-rose-500 rounded-2xl font-black uppercase text-xs tracking-widest transition-all";
        document.getElementById('btn-submit-transaction').textContent = "Guardar Despesa";
        document.getElementById('lbl-card-origem').textContent = "Conta Origem";
@@ -1540,8 +1563,8 @@
 
     document.getElementById('btn-type-income').onclick = () => {
        state.activeType = 'income';
-       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-emerald-600 text-slate-955";
-       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white";
+       document.getElementById('btn-type-income').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-emerald-600 text-slate-955 transition-all";
+       document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-white transition-all";
        document.getElementById('btn-submit-transaction').className = "w-full py-4 mt-2 bg-emerald-600 hover:bg-emerald-500 rounded-2xl font-black uppercase text-xs tracking-widest transition-all text-slate-955";
        document.getElementById('btn-submit-transaction').textContent = "Guardar Receita";
        document.getElementById('lbl-card-origem').textContent = "Conta Destino";
@@ -1590,10 +1613,12 @@
        document.getElementById('settings-tab-cards').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1";
        document.getElementById('settings-tab-categories').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1";
        document.getElementById('settings-tab-sync').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1";
+       document.getElementById('settings-tab-data').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1";
 
        document.getElementById('settings-section-cards').classList.add('hidden');
        document.getElementById('settings-section-categories').classList.add('hidden');
        document.getElementById('settings-section-sync').classList.add('hidden');
+       document.getElementById('settings-section-data').classList.add('hidden');
 
        if (subTab === 'cards') {
           document.getElementById('settings-tab-cards').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-950 font-black flex items-center justify-center gap-1";
@@ -1603,15 +1628,19 @@
           document.getElementById('settings-tab-categories').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 font-black flex items-center justify-center gap-1";
           document.getElementById('settings-section-categories').classList.remove('hidden');
           renderFidCategories();
-       } else {
+       } else if (subTab === 'sync') {
           document.getElementById('settings-tab-sync').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 font-black flex items-center justify-center gap-1";
           document.getElementById('settings-section-sync').classList.remove('hidden');
+       } else if (subTab === 'data') {
+          document.getElementById('settings-tab-data').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 font-black flex items-center justify-center gap-1";
+          document.getElementById('settings-section-data').classList.remove('hidden');
        }
     };
 
     document.getElementById('settings-tab-cards').onclick = () => openAjustesModal('cards');
     document.getElementById('settings-tab-categories').onclick = () => openAjustesModal('categories');
     document.getElementById('settings-tab-sync').onclick = () => openAjustesModal('sync');
+    document.getElementById('settings-tab-data').onclick = () => openAjustesModal('data');
 
     document.getElementById('btn-save-fb').onclick = () => {
        const input = document.getElementById('firebase-config-input').value.trim();
@@ -1720,6 +1749,116 @@
        reader.readAsText(file);
     };
 
+    document.getElementById('btn-export-csv').onclick = () => {
+       if (state.transactions.length === 0) {
+          showToast("Nenhum dado para exportar!", "error");
+          return;
+       }
+
+       const headers = ["Descrição", "Categoria", "Conta Origem", "Forma de pagamento", "Parcelamento", "Valor", "Tipo", "Data", "Mês Ref"];
+       const rows = state.transactions.map(t => {
+          const desc = `"${(t.description || '').replace(/"/g, '""')}"`;
+          const cat = `"${(t.category || '').replace(/"/g, '""')}"`;
+          const acc = `"${(t.cardUsed || 'Nenhuma').replace(/"/g, '""')}"`;
+          const method = `"${(t.paymentMethod || '').replace(/"/g, '""')}"`;
+          const inst = `"${t.isInstallment ? t.installmentsCount + 'x' : 'À vista'}"`;
+          const val = `"${t.amount.toFixed(2).replace('.', ',')}"`;
+          const type = `"${t.type}"`;
+          const date = `"${t.date || ''}"`;
+          const month = `"${t.billingMonth || ''}"`;
+          return [desc, cat, acc, method, inst, val, type, date, month].join(";");
+       });
+
+       const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers.join(";") + "\n" + rows.join("\n");
+       const encodedUri = encodeURI(csvContent);
+       const link = document.createElement("a");
+       link.setAttribute("href", encodedUri);
+       link.setAttribute("download", `Planilha_FinancasPro_${new Date().toISOString().split('T')[0]}.csv`);
+       document.body.appendChild(link);
+       link.click();
+       link.remove();
+       
+       showToast("Planilha exportada com sucesso!", "success");
+    };
+
+    document.getElementById('import-csv-file').onchange = (e) => {
+       const file = e.target.files[0];
+       if (!file) return;
+
+       const reader = new FileReader();
+       reader.onload = async (event) => {
+          try {
+              const text = event.target.result;
+              const lines = text.split('\n').filter(l => l.trim() !== '');
+              if (lines.length < 2) {
+                 showToast("Planilha vazia ou sem lançamentos!", "error");
+                 return;
+              }
+
+              let importedCount = 0;
+              let localTxs = JSON.parse(localStorage.getItem(`transactions_${LOCAL_KEY}`) || '[]');
+
+              for (let i = 1; i < lines.length; i++) {
+                 const rowRegex = /(?:^|;)(?:"([^"]*(?:""[^"]*)*)"|([^;]*))/g;
+                 let row = [];
+                 let match;
+                 while (match = rowRegex.exec(lines[i])) {
+                     row.push(match[1] !== undefined ? match[1].replace(/""/g, '"') : match[2]);
+                 }
+                 if (row.length > 0 && row[row.length-1] === '') row.pop();
+
+                 if (row.length >= 6) {
+                    const desc = row[0] || "Lançamento Importado";
+                    const cat = row[1] || "Outros";
+                    const acc = (!row[2] || row[2] === 'Nenhuma') ? null : row[2];
+                    const method = row[3] || null;
+                    const instStr = row[4] || 'À vista';
+                    const valStr = (row[5] || '0').replace(',', '.');
+                    
+                    const type = row[6] || 'expense';
+                    const dateVal = row[7] || new Date().toISOString().split('T')[0];
+                    const monthVal = row[8] || state.selectedMonth;
+
+                    const isInst = instStr !== 'À vista' && instStr.includes('x');
+                    const instCount = isInst ? parseInt(instStr) : 1;
+                    const amt = parseFloat(valStr) || 0;
+
+                    localTxs.push({
+                       id: crypto.randomUUID(),
+                       description: desc.toUpperCase(),
+                       amount: amt,
+                       type: type,
+                       category: cat,
+                       billingMonth: monthVal,
+                       date: dateVal,
+                       paymentMethod: method,
+                       cardUsed: acc,
+                       isInstallment: isInst,
+                       installmentsCount: instCount,
+                       createdAt: new Date().toISOString()
+                    });
+                    importedCount++;
+                 }
+              }
+
+              if (importedCount > 0) {
+                 localStorage.setItem(`transactions_${LOCAL_KEY}`, JSON.stringify(localTxs));
+                 syncStateFromLocal();
+                 if (state.sharingCode) DB.syncToCloud();
+                 renderAll();
+                 showToast(`${importedCount} lançamentos importados com sucesso!`, "success");
+              } else {
+                 showToast("Nenhum dado pôde ser importado.", "error");
+              }
+          } catch (err) {
+              console.error(err);
+              showToast("Erro ao ler o arquivo CSV.", "error");
+          }
+          e.target.value = '';
+       };
+       reader.readAsText(file);
+    };
+
     document.getElementById('btn-danger-reset').onclick = () => {
        showConfirm("Apagar Tudo", "Todos os dados locais e de cloud serão redefinidos permanentemente! Continuar?", () => {
           localStorage.clear();
@@ -1731,22 +1870,23 @@
 
    function handleViewStatement() {
        let list = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
-       
+
        if (state.filterType !== 'all') {
           list = list.filter(t => t.type === state.filterType);
        }
+
        if (state.filterCard !== 'all') {
           list = list.filter(t => (t.cardUsed || 'Sem Conta') === state.filterCard);
        }
+
        if (state.searchQuery) {
           list = list.filter(t => t.description.toLowerCase().includes(state.searchQuery) || t.category.toLowerCase().includes(state.searchQuery));
        }
 
        if (list.length === 0) {
-          showToast("Nenhum lançamento encontrado com esses filtros!", "error");
+          showToast("Nenhum lançamento no mês para extrato!", "error");
           return;
        }
-       
        const totals = list.reduce((acc, curr) => {
           if (curr.type === 'income') acc.income += curr.displayAmount;
           else acc.expenses += curr.displayAmount;
@@ -1755,23 +1895,17 @@
 
        const netBalance = totals.income - totals.expenses;
 
-       let appliedFiltersLabel = '';
-       if (state.filterCard !== 'all' || state.filterType !== 'all') {
-          appliedFiltersLabel = `Filtros: ${state.filterType !== 'all' ? (state.filterType === 'expense' ? 'Despesas' : 'Receitas') : ''} ${state.filterCard !== 'all' ? `[${state.filterCard}]` : ''}`;
-       }
-
        const container = document.getElementById('statement-content');
        container.innerHTML = `
           <div class="border-b-4 border-slate-900 pb-8 mb-8 flex justify-between items-end uppercase">
              <div>
                 <h1 class="text-3xl font-black text-slate-900">FinançasPro</h1>
                 <p class="text-[10px] text-slate-400 font-extrabold tracking-widest mt-1">Extrato Mensal</p>
-                ${appliedFiltersLabel ? `<p class="text-[9px] font-black text-blue-500 mt-2">${appliedFiltersLabel}</p>` : ''}
              </div>
              <div class="text-right">
                 <p class="text-[9px] font-black text-slate-400">Referência</p>
                 <p class="font-black text-lg leading-none">${state.selectedMonth}</p>
-                <p class="text-[9px] font-black text-slate-400 mt-2">Saldo Total (Filtrado)</p>
+                <p class="text-[9px] font-black text-slate-400 mt-2">Saldo Total</p>
                 <p class="font-black text-lg leading-none ${netBalance >= 0 ? 'text-emerald-600' : 'text-rose-600'}">
                    ${formatBRL(netBalance)}
                 </p>
@@ -1810,9 +1944,7 @@
     
     document.getElementById('btn-share-statement').onclick = () => {
        const element = document.getElementById('statement-content');
-       let filename = `Extrato_FinancasPro_${state.selectedMonth.replace('/', '-')}`;
-       if (state.filterCard !== 'all') { filename += `_${state.filterCard}`; }
-       filename += '.pdf';
+       const filename = `Extrato_FinancasPro_${state.selectedMonth.replace('/', '-')}.pdf`;
        
        const opt = {
           margin:       0.5,
