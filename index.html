@@ -309,6 +309,10 @@
                   <input type="text" id="transaction-amount" inputmode="numeric" placeholder="0,00" class="bg-transparent text-3xl font-black text-white outline-none focus:outline-none border-0 p-0 w-full" required />
                 </div>
               </div>
+              <!-- 1. BOTÃO DA CALCULADORA ADICIONADO AO LADO DO INPUT DE VALOR -->
+              <button type="button" id="btn-open-calculator" class="p-3.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-xl transition-all shadow-md shrink-0 border border-slate-700">
+                <i data-lucide="calculator" class="w-6 h-6"></i>
+              </button>
             </div>
 
             <div class="space-y-3">
@@ -616,6 +620,51 @@
            <button type="button" id="btn-opt-delete" class="w-full py-3.5 bg-rose-600 hover:bg-rose-500 text-white rounded-2xl font-black text-[10px] uppercase shadow-lg">Eliminar</button>
            <button type="button" id="btn-opt-cancel" class="w-full py-3.5 bg-slate-900 text-slate-400 rounded-2xl font-black text-[10px] uppercase border border-slate-800">Cancelar</button>
         </div>
+     </div>
+  </div>
+
+  <!-- 2. MODAL VISUAL DA CALCULADORA (ADICIONADO LOGO ANTES DO <script>) -->
+  <div id="calculator-modal" class="hidden fixed inset-0 z-[220] bg-black/85 backdrop-blur-md flex items-center justify-center p-6">
+     <div class="bg-card-dark w-full max-w-xs rounded-[2.5rem] p-6 shadow-2xl text-center">
+        <div class="flex justify-between items-center mb-4">
+           <h3 class="text-white font-black uppercase text-xs tracking-widest">Calculadora</h3>
+           <button type="button" id="btn-close-calc" class="text-slate-400 hover:text-rose-400 transition-colors p-1"><i data-lucide="x" class="w-5 h-5"></i></button>
+        </div>
+        
+        <div class="bg-input-dark p-4 rounded-2xl mb-4 text-right overflow-hidden shadow-inner border border-slate-800">
+           <div id="calc-history" class="text-[10px] text-slate-500 font-bold h-4 mb-1 tracking-wider"></div>
+           <div id="calc-display" class="text-3xl font-black text-white truncate">0</div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2">
+           <button type="button" class="calc-btn p-3 bg-slate-800 text-rose-400 rounded-xl font-black text-lg" data-val="C">C</button>
+           <button type="button" class="calc-btn p-3 bg-slate-800 text-slate-300 rounded-xl font-black text-lg" data-val="(">(</button>
+           <button type="button" class="calc-btn p-3 bg-slate-800 text-slate-300 rounded-xl font-black text-lg" data-val=")">)</button>
+           <button type="button" class="calc-btn p-3 bg-slate-800 text-emerald-400 rounded-xl font-black text-lg" data-val="/">/</button>
+
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="7">7</button>
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="8">8</button>
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="9">9</button>
+           <button type="button" class="calc-btn p-3 bg-slate-800 text-emerald-400 rounded-xl font-black text-lg" data-val="*">x</button>
+
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="4">4</button>
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="5">5</button>
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="6">6</button>
+           <button type="button" class="calc-btn p-3 bg-slate-800 text-emerald-400 rounded-xl font-black text-lg" data-val="-">-</button>
+
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="1">1</button>
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="2">2</button>
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val="3">3</button>
+           <button type="button" class="calc-btn p-3 bg-slate-800 text-emerald-400 rounded-xl font-black text-lg" data-val="+">+</button>
+
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg col-span-2 hover:bg-slate-800 transition-colors" data-val="0">0</button>
+           <button type="button" class="calc-btn p-3 bg-slate-900 text-white rounded-xl font-black text-lg hover:bg-slate-800 transition-colors" data-val=".">,</button>
+           <button type="button" class="calc-btn p-3 bg-emerald-600 text-slate-955 rounded-xl font-black text-lg shadow-lg hover:bg-emerald-500 transition-colors" data-val="=">=</button>
+        </div>
+        
+        <button type="button" id="btn-use-calc-val" class="w-full mt-4 py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-black text-[10px] uppercase tracking-wider shadow-lg transition-all">
+           Usar Valor no Lançamento
+        </button>
      </div>
   </div>
 
@@ -2080,6 +2129,64 @@
             modal.classList.add("hidden");
         }
     };
+
+    // 3. LÓGICA JAVASCRIPT DA CALCULADORA (ADICIONADA LOGO ANTES DO initApp)
+    let calcExpression = "";
+    
+    document.querySelectorAll('.calc-btn').forEach(btn => {
+        btn.onclick = () => {
+            const val = btn.dataset.val;
+            if (val === 'C') {
+                calcExpression = "";
+                document.getElementById('calc-display').textContent = "0";
+                document.getElementById('calc-history').textContent = "";
+            } else if (val === '=') {
+                try {
+                    let safeExpr = calcExpression.replace(/,/g, '.');
+                    let result = new Function('return ' + safeExpr)();
+                    if (!isFinite(result)) throw new Error("Invalid");
+                    document.getElementById('calc-history').textContent = calcExpression + " =";
+                    result = Math.round(result * 100) / 100;
+                    calcExpression = result.toString();
+                    document.getElementById('calc-display').textContent = calcExpression.replace('.', ',');
+                } catch(e) {
+                    document.getElementById('calc-display').textContent = "Erro";
+                    calcExpression = "";
+                }
+            } else {
+                if (calcExpression === "0" && val !== '.') calcExpression = "";
+                calcExpression += val;
+                document.getElementById('calc-display').textContent = calcExpression.replace(/\./g, ',');
+            }
+        };
+    });
+
+    document.getElementById('btn-open-calculator').onclick = () => {
+        document.getElementById('calculator-modal').classList.remove('hidden');
+        calcExpression = "";
+        document.getElementById('calc-display').textContent = "0";
+        document.getElementById('calc-history').textContent = "";
+    };
+
+    document.getElementById('btn-close-calc').onclick = () => {
+        document.getElementById('calculator-modal').classList.add('hidden');
+    };
+
+    document.getElementById('btn-use-calc-val').onclick = () => {
+        const displayVal = document.getElementById('calc-display').textContent;
+        if (displayVal && displayVal !== "Erro") {
+            const inputAmount = document.getElementById('transaction-amount');
+            let floatVal = parseFloat(displayVal.replace(',', '.'));
+            if (!isNaN(floatVal)) {
+                inputAmount.value = floatVal.toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+        }
+        document.getElementById('calculator-modal').classList.add('hidden');
+    };
+    // -----------------------------
 
     function initApp() {
        syncStateFromLocal();
