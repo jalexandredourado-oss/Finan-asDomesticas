@@ -218,19 +218,19 @@
           <!-- Coluna Esquerda: Gráficos -->
           <div class="flex flex-col gap-6 lg:col-span-1">
             
+            <!-- Gráfico de Barras Horizontal para Consolidação de Crédito (Agora no Topo) -->
+            <div class="bg-card-dark p-5 rounded-3xl flex flex-col h-auto min-h-[280px]">
+              <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">faturas dos cartões</h3>
+              <div class="w-full flex-1 relative min-h-[200px]">
+                 <canvas id="creditBarChart"></canvas>
+              </div>
+            </div>
+
             <!-- Gráfico de Valores Totais (Histórico Completo) -->
             <div class="bg-card-dark p-5 rounded-3xl flex flex-col items-center h-auto min-h-[280px]">
               <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">Balanço Histórico</h3>
               <div class="w-full flex-1 relative min-h-[200px]">
                  <canvas id="totalPieChart"></canvas>
-              </div>
-            </div>
-
-            <!-- Gráfico de Barras Horizontal para Consolidação de Crédito -->
-            <div class="bg-card-dark p-5 rounded-3xl flex flex-col h-auto min-h-[280px]">
-              <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">faturas dos cartões</h3>
-              <div class="w-full flex-1 relative min-h-[200px]">
-                 <canvas id="creditBarChart"></canvas>
               </div>
             </div>
 
