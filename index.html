@@ -166,6 +166,10 @@
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
           <span>Lançamentos</span>
         </button>
+        <button data-tab="installments" class="nav-tab-btn flex-1 sm:flex-initial flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1.5 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all text-[10px] sm:text-xs font-bold text-slate-400 hover:text-white">
+          <i data-lucide="layers" class="w-4 h-4"></i>
+          <span>Prestações</span>
+        </button>
         <button data-tab="history" class="nav-tab-btn flex-1 sm:flex-initial flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1.5 py-2 sm:px-4 sm:py-2.5 rounded-xl transition-all text-[10px] sm:text-xs font-bold text-slate-400 hover:text-white">
           <i data-lucide="history" class="w-4 h-4"></i>
           <span>Histórico</span>
@@ -213,54 +217,58 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           
-          <!-- Coluna Esquerda: Gráficos -->
-          <div class="flex flex-col gap-6 lg:col-span-1">
-            
-            <!-- Gráfico de Barras Horizontal para Consolidação de Crédito (Agora no Topo) -->
-            <div class="bg-card-dark p-5 rounded-3xl flex flex-col h-auto min-h-[280px]">
-              <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">faturas dos cartões</h3>
-              <div class="w-full flex-1 relative min-h-[200px]">
-                 <canvas id="creditBarChart"></canvas>
-              </div>
+          <!-- Gráfico de Barras Horizontal para Consolidação de Crédito -->
+          <div class="bg-card-dark p-5 rounded-3xl flex flex-col h-auto min-h-[280px]">
+            <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">faturas dos cartões</h3>
+            <div class="w-full flex-1 relative min-h-[200px]">
+               <canvas id="creditBarChart"></canvas>
             </div>
-
-            <!-- Gráfico de Valores Totais (Histórico Completo) -->
-            <div class="bg-card-dark p-5 rounded-3xl flex flex-col items-center h-auto min-h-[280px]">
-              <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">Balanço Histórico</h3>
-              <div class="w-full flex-1 relative min-h-[200px]">
-                 <canvas id="totalPieChart"></canvas>
-              </div>
-            </div>
-
           </div>
 
-          <!-- Coluna Direita: Minhas Economias (Atividade Recente) -->
-          <div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-[520px] overflow-hidden">
-            <div class="flex justify-between items-center mb-6">
-              <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Prestações</h3>
-              
-            </div>
-            <div class="flex-1 overflow-y-auto overflow-x-hidden">
-              <table class="w-full text-left border-collapse min-w-[500px]">
-                <thead>
-                  <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
-                      <th class="py-3 px-2">Descrição</th>
-                      <th class="py-3 px-2">Conta Origem</th>
-                      <th class="py-3 px-2">Parcelamento</th>
-                      <th class="py-3 px-2 text-right">Valor Total</th>
-                  </tr>
-                </thead>
-                <tbody id="dashboard-activity-list" class="divide-y divide-slate-800/50">
-                  <!-- Renderizado Dinamicamente -->
-                </tbody>
-              </table>
+          <!-- Gráfico de Valores Totais (Histórico Completo) -->
+          <div class="bg-card-dark p-5 rounded-3xl flex flex-col items-center h-auto min-h-[280px]">
+            <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">Balanço Histórico</h3>
+            <div class="w-full flex-1 relative min-h-[200px]">
+               <canvas id="totalPieChart"></canvas>
             </div>
           </div>
 
         </div>
 
+        <!-- NOVO GRÁFICO DE TENDÊNCIA E EVOLUÇÃO -->
+        <div class="bg-card-dark p-5 rounded-3xl flex flex-col h-auto min-h-[300px]">
+          <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">Evolução Mensal</h3>
+          <div class="w-full flex-1 relative min-h-[220px]">
+             <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ABA PRESTAÇÕES -->
+      <section id="tab-installments" class="tab-content hidden space-y-6 animate-in fade-in duration-300">
+        <div class="bg-card-dark p-6 rounded-3xl flex flex-col min-h-[520px] overflow-hidden">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Prestações</h3>
+          </div>
+          <div class="flex-1 overflow-y-auto overflow-x-hidden">
+            <table class="w-full text-left border-collapse min-w-[500px]">
+              <thead>
+                <tr class="border-b border-slate-800 text-[11px] font-black uppercase text-slate-550 tracking-wider">
+                    <th class="py-3 px-2">Descrição</th>
+                    <th class="py-3 px-2">Conta Origem</th>
+                    <th class="py-3 px-2">Parcelamento</th>
+                    <th class="py-3 px-2 text-right">Valor Total</th>
+                </tr>
+              </thead>
+              <tbody id="installments-activity-list" class="divide-y divide-slate-800/50">
+                <!-- Renderizado Dinamicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
 
       <!-- ABA 2: LANÇAMENTOS (FORMULÁRIO DE ENTRADAS) -->
@@ -699,6 +707,7 @@
     let authUser = null;
     let totalPieChartInstance = null; // Instância do Gráfico
     let creditBarChartInstance = null; // NOVO: Instância do Gráfico de Crédito
+    let trendChartInstance = null;
 
     function formatBRL(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -1087,49 +1096,6 @@
           });
       }
 
-      const activityList = document.getElementById('dashboard-activity-list');
-      if (activityList) {
-          activityList.innerHTML = "";
-          const parcelas = state.transactions
-          .filter(t => t.type === "expense" && t.isInstallment)
-          .sort((a,b)=>new Date(b.date)-new Date(a.date));
-
-          if(parcelas.length===0){
-              activityList.innerHTML=`
-              <tr>
-                  <td colspan="4" class="py-8 text-center text-slate-500 font-bold text-xs uppercase tracking-widest">
-                      Nenhuma compra parcelada.
-                  </td>
-              </tr>
-              `;
-          }else{
-              parcelas.forEach(t=>{
-                  const tr = document.createElement("tr");
-                  tr.className = "border-b border-slate-800 hover:bg-slate-800/60 cursor-pointer transition-all duration-200";
-                  tr.innerHTML = `
-                      <td class="py-3 px-2">
-                          <p class="text-xs font-bold text-white uppercase">${t.description}</p>
-                      </td>
-                      <td class="py-3 px-2">
-                          <span class="text-slate-300 font-semibold text-xs uppercase">${t.cardUsed || "-"}</span>
-                      </td>
-                      <td class="py-3 px-2">
-                          <p class="text-[10px] font-black text-slate-400">
-                              ${t.installmentsCount}x de ${formatBRL(t.amount / t.installmentsCount)}
-                          </p>
-                      </td>
-                      <td class="py-3 px-2 text-right">
-                          <span class="text-white font-bold whitespace-nowrap text-sm">${formatBRL(t.amount)}</span>
-                      </td>
-                  `;
-                  tr.onclick = () => {
-                      openInstallmentModal(t);
-                  };
-                  activityList.appendChild(tr);
-              });
-          }
-      }
-
       // NOVO: Renderizar Gráfico de Barras (Crédito por Conta Origem)
       const ctxBar = document.getElementById('creditBarChart');
       if (ctxBar) {
@@ -1261,6 +1227,176 @@
           });
       }
 
+      // NOVO: Gráfico de Tendência Mensal
+      const ctxTrend = document.getElementById('trendChart');
+      if (ctxTrend) {
+          const expandedTxs = expandedTransactions();
+          
+          // Pegar todos os meses existentes e ordenar
+          const monthsSet = new Set();
+          expandedTxs.forEach(t => {
+              if (t.displayMonth) monthsSet.add(t.displayMonth);
+          });
+          
+          let sortedMonths = Array.from(monthsSet).sort((a,b) => {
+              const [mA, yA] = a.split('/').map(Number);
+              const [mB, yB] = b.split('/').map(Number);
+              return yA !== yB ? yA - yB : mA - mB;
+          });
+
+          if (sortedMonths.length === 0) {
+              sortedMonths = [state.selectedMonth];
+          }
+
+          const trendIncome = [];
+          const trendExpense = [];
+          const trendBalance = [];
+
+          sortedMonths.forEach(m => {
+              let mInc = 0;
+              let mExp = 0;
+              expandedTxs.filter(t => t.displayMonth === m).forEach(t => {
+                  if (t.type === 'income') mInc += t.displayAmount;
+                  else mExp += t.displayAmount;
+              });
+              trendIncome.push(mInc);
+              trendExpense.push(mExp);
+              trendBalance.push(mInc - mExp);
+          });
+
+          if (trendChartInstance) {
+              trendChartInstance.destroy();
+          }
+
+          trendChartInstance = new Chart(ctxTrend, {
+              type: 'bar',
+              data: {
+                  labels: sortedMonths,
+                  datasets: [
+                      {
+                          type: 'line',
+                          label: 'Saldo Geral',
+                          data: trendBalance,
+                          borderColor: '#3b82f6', // Azul para Saldo
+                          backgroundColor: '#3b82f6',
+                          borderWidth: 2,
+                          tension: 0.4,
+                          pointRadius: 4,
+                          pointBackgroundColor: '#080d1a',
+                          pointBorderWidth: 2,
+                          fill: false,
+                          order: 0
+                      },
+                      {
+                          type: 'bar',
+                          label: 'Receitas',
+                          data: trendIncome,
+                          backgroundColor: '#10b981', // Verde
+                          borderRadius: 4,
+                          barThickness: 16,
+                          order: 1
+                      },
+                      {
+                          type: 'bar',
+                          label: 'Despesas',
+                          data: trendExpense,
+                          backgroundColor: '#f43f5e', // Vermelho
+                          borderRadius: 4,
+                          barThickness: 16,
+                          order: 2
+                      }
+                  ]
+              },
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  interaction: {
+                      mode: 'index',
+                      intersect: false,
+                  },
+                  plugins: {
+                      legend: {
+                          labels: { color: '#94a3b8', font: { size: 10, family: 'Plus Jakarta Sans' }, usePointStyle: true }
+                      },
+                      tooltip: {
+                          callbacks: {
+                              label: function(context) {
+                                  let label = context.dataset.label || '';
+                                  if (label) label += ': ';
+                                  if (context.parsed.y !== null) {
+                                      label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
+                                  }
+                                  return label;
+                              }
+                          }
+                      }
+                  },
+                  scales: {
+                      x: {
+                          ticks: { color: '#94a3b8', font: { size: 10 } },
+                          grid: { display: false }
+                      },
+                      y: {
+                          ticks: {
+                              color: '#94a3b8', 
+                              font: { size: 10 },
+                              callback: function(value) {
+                                  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
+                              }
+                          },
+                          grid: { color: '#1e293b', borderDash: [5, 5] }
+                      }
+                  }
+              }
+          });
+      }
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function renderInstallments() {
+      const activityList = document.getElementById('installments-activity-list');
+      if (activityList) {
+          activityList.innerHTML = "";
+          const parcelas = state.transactions
+          .filter(t => t.type === "expense" && t.isInstallment)
+          .sort((a,b)=>new Date(b.date)-new Date(a.date));
+
+          if(parcelas.length===0){
+              activityList.innerHTML=`
+              <tr>
+                  <td colspan="4" class="py-8 text-center text-slate-500 font-bold text-xs uppercase tracking-widest">
+                      Nenhuma compra parcelada.
+                  </td>
+              </tr>
+              `;
+          }else{
+              parcelas.forEach(t=>{
+                  const tr = document.createElement("tr");
+                  tr.className = "border-b border-slate-800 hover:bg-slate-800/60 cursor-pointer transition-all duration-200";
+                  tr.innerHTML = `
+                      <td class="py-3 px-2">
+                          <p class="text-xs font-bold text-white uppercase">${t.description}</p>
+                      </td>
+                      <td class="py-3 px-2">
+                          <span class="text-slate-300 font-semibold text-xs uppercase">${t.cardUsed || "-"}</span>
+                      </td>
+                      <td class="py-3 px-2">
+                          <p class="text-[10px] font-black text-slate-400">
+                              ${t.installmentsCount}x de ${formatBRL(t.amount / t.installmentsCount)}
+                          </p>
+                      </td>
+                      <td class="py-3 px-2 text-right">
+                          <span class="text-white font-bold whitespace-nowrap text-sm">${formatBRL(t.amount)}</span>
+                      </td>
+                  `;
+                  tr.onclick = () => {
+                      openInstallmentModal(t);
+                  };
+                  activityList.appendChild(tr);
+              });
+          }
+      }
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
@@ -1538,6 +1674,8 @@
           renderMonthsScroll();
           renderHistoryCardFilters();
           renderHistory();
+       } else if (state.activeTab === 'installments') {
+          renderInstallments();
        }
     }
 
