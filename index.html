@@ -214,17 +214,33 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Coluna Esquerda: Gráficos -->
           <div class="flex flex-col gap-6 lg:col-span-1">
+            
+            <!-- Gráfico de Valores Totais (Histórico Completo) -->
             <div class="bg-card-dark p-5 rounded-3xl flex flex-col items-center h-auto min-h-[280px]">
               <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">Balanço Histórico</h3>
               <div class="w-full flex-1 relative min-h-[200px]">
                  <canvas id="totalPieChart"></canvas>
               </div>
             </div>
+
+            <!-- Gráfico de Barras Horizontal para Consolidação de Crédito -->
+            <div class="bg-card-dark p-5 rounded-3xl flex flex-col h-auto min-h-[280px]">
+              <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">faturas dos cartões</h3>
+              <div class="w-full flex-1 relative min-h-[200px]">
+                 <canvas id="creditBarChart"></canvas>
+              </div>
+            </div>
+
           </div>
+
+          <!-- Coluna Direita: Minhas Economias (Atividade Recente) -->
           <div class="bg-card-dark p-6 rounded-3xl lg:col-span-2 flex flex-col h-[520px] overflow-hidden">
             <div class="flex justify-between items-center mb-6">
               <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Prestações</h3>
+              
             </div>
             <div class="flex-1 overflow-y-auto overflow-x-hidden">
               <table class="w-full text-left border-collapse min-w-[500px]">
@@ -242,7 +258,9 @@
               </table>
             </div>
           </div>
+
         </div>
+
       </section>
 
       <!-- ABA 2: LANÇAMENTOS (FORMULÁRIO DE ENTRADAS) -->
@@ -679,7 +697,8 @@
     let isCloudConnected = false;
     let cloudUnsubscribe = null;
     let authUser = null;
-    let totalPieChartInstance = null;
+    let totalPieChartInstance = null; // Instância do Gráfico
+    let creditBarChartInstance = null; // NOVO: Instância do Gráfico de Crédito
 
     function formatBRL(val) {
       return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -1110,6 +1129,138 @@
               });
           }
       }
+
+      // NOVO: Renderizar Gráfico de Barras (Crédito por Conta Origem)
+      const ctxBar = document.getElementById('creditBarChart');
+      if (ctxBar) {
+          // Filtrar despesas do mês no crédito (independente de acentos)
+          const creditExpenses = monthlyTransactions.filter(t => 
+              t.type === 'expense' && 
+              t.paymentMethod && 
+              t.paymentMethod.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes('CREDITO')
+          );
+
+          // Agrupar por Conta Origem
+          const creditByCard = {};
+          creditExpenses.forEach(t => {
+              const card = t.cardUsed || 'Sem Conta';
+              if (!creditByCard[card]) {
+                  creditByCard[card] = 0;
+              }
+              creditByCard[card] += t.displayAmount;
+          });
+
+          const labels = Object.keys(creditByCard);
+          const dataValues = Object.values(creditByCard);
+
+          // Lógica de cores personalizadas pelas Contas
+          const customColors = labels.map(label => {
+              const name = label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+              if (name.includes('nubank')) return '#a855f7'; // Roxo
+              if (name.includes('inter')) return '#f97316'; // Laranja
+              if (name.includes('brasil') || name === 'bb') return '#eab308'; // Amarelo
+              if (name.includes('sicredi')) return '#22c55e'; // Verde
+              if (name.includes('shopee')) return '#ef4444'; // Vermelho
+              return '#3b82f6'; // Azul padrão para outros
+          });
+
+          if (creditBarChartInstance) {
+              creditBarChartInstance.destroy();
+          }
+
+          creditBarChartInstance = new Chart(ctxBar, {
+              type: 'bar',
+              data: {
+                  labels: labels.length > 0 ? labels : ['Nenhuma despesa no crédito'],
+                  datasets: [{
+                      label: 'Total no Mês',
+                      data: dataValues.length > 0 ? dataValues : [0],
+                      backgroundColor: dataValues.length > 0 ? customColors : ['#3b82f6'],
+                      borderRadius: 6,
+                      barThickness: 22 // Diminui a espessura das barras
+                  }]
+              },
+              options: {
+                  indexAxis: 'y', // Define o gráfico como horizontal
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  layout: {
+                      padding: { right: 40 } // Dá um respiro na direita caso algum valor pequeno fique para fora
+                  },
+                  plugins: {
+                      legend: { display: false },
+                      tooltip: {
+                          callbacks: {
+                              label: function(context) {
+                                  if (dataValues.length === 0) return ' R$ 0,00';
+                                  let label = context.dataset.label || '';
+                                  if (label) label += ': ';
+                                  if (context.parsed.x !== null) {
+                                      label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.x);
+                                  }
+                                  return label;
+                              }
+                          }
+                      }
+                  },
+                  scales: {
+                      x: {
+                          beginAtZero: true,
+                          grace: '10%', // Dá uma folga visual no grid ao final da maior barra
+                          ticks: { 
+                              color: '#94a3b8', 
+                              font: { size: 10 },
+                              callback: function(value) {
+                                  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
+                              }
+                          },
+                          grid: { color: '#1e293b' }
+                      },
+                      y: {
+                          ticks: { 
+                              // Usa a mesma lista de cores para pintar os nomes (rótulos)
+                              color: dataValues.length > 0 ? customColors : '#94a3b8', 
+                              font: { size: 10, weight: 'bold' } 
+                          },
+                          grid: { display: false }
+                      }
+                  }
+              },
+              // Plugin customizado para desenhar os valores dentro das barras
+              plugins: [{
+                  id: 'barLabels',
+                  afterDatasetsDraw(chart) {
+                      const { ctx, data } = chart;
+                      ctx.save();
+                      ctx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
+                      ctx.textBaseline = 'middle';
+                      
+                      chart.getDatasetMeta(0).data.forEach((datapoint, index) => {
+                          const value = data.datasets[0].data[index];
+                          if (dataValues.length === 0) return; // ignora se não houver dados no mês
+                          
+                          const formatted = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+                          const textWidth = ctx.measureText(formatted).width;
+                          
+                          // Calcula a posição X (dentro da barra, encostado no final direito)
+                          let xPos = datapoint.x - textWidth - 8; 
+                          let textColor = '#ffffff'; // Cor branca por padrão (para dentro da barra)
+                          
+                          // Se o valor/barra for tão pequeno que não cabe o texto, joga para fora
+                          if (xPos < datapoint.base + 5) {
+                              xPos = datapoint.x + 8;
+                              textColor = customColors[index] || '#94a3b8'; // Pinta o texto com a cor do banco associado
+                          }
+                          
+                          ctx.fillStyle = textColor;
+                          ctx.fillText(formatted, xPos, datapoint.y);
+                      });
+                      ctx.restore();
+                  }
+              }]
+          });
+      }
+
       if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
