@@ -238,13 +238,13 @@
         </div>
 
         <!-- NOVO GRÁFICO DE TENDÊNCIA E EVOLUÇÃO -->
-        <div class="bg-card-dark p-6 mt-8 border border-slate-800 rounded-3xl shadow-2xl flex flex-col h-auto min-h-[480px]">
-          <div class="w-full mx-auto mb-6">
-             <h3 class="text-sm font-black text-white uppercase tracking-wider text-left">Saldo do Mês</h3>
+        <div class="w-screen relative left-1/2 -translate-x-1/2 bg-card-dark py-8 px-4 md:px-8 mt-4 border-y border-slate-800 shadow-2xl flex flex-col h-auto min-h-[480px]">
+          <div class="w-full max-w-6xl mx-auto mb-6">
+             <h3 class="text-sm font-black text-white uppercase tracking-wider text-left">Evolução Mensal</h3>
           </div>
-          <!-- CONTAINER COM SCROLL -->
-          <div class="w-full mx-auto flex-1 overflow-x-auto scrollbar-hide pb-4">
-             <div class="relative min-h-[380px]" style="min-width: 150px;">
+          <!-- CONTAINER COM SCROLL HORIZONTAL -->
+          <div class="w-full max-w-6xl mx-auto flex-1 overflow-x-auto scrollbar-hide pb-4">
+             <div id="trend-chart-wrapper" class="relative min-h-[380px] transition-all duration-300">
                 <canvas id="trendChart"></canvas>
              </div>
           </div>
@@ -1290,8 +1290,7 @@
                           type: 'bar',
                           label: 'Saldo Geral',
                           data: trendBalance,
-                          // Verde se positivo (#10b981), Vermelho se negativo (#f43f5e)
-                          backgroundColor: trendBalance.map(val => val >= 0 ? '#10b981' : '#f43f5e'),
+                          backgroundColor: trendBalance.map(val => val >= 0 ? '#10b981' : '#f43f5e'), // Verde se positivo, Vermelho se negativo
                           borderRadius: 8,
                           barThickness: 100
                       }
@@ -1299,7 +1298,7 @@
               },
               options: {
                   layout: {
-                      padding: { top: 30, bottom: 30 }
+                      padding: { top: 30, bottom: 30 } // Dá espaço extra no topo e base para os números não cortarem
                   },
                   responsive: true,
                   maintainAspectRatio: false,
@@ -1364,9 +1363,9 @@
                           const barHeight = Math.abs(datapoint.base - datapoint.y);
                           
                           let yPos;
-                          // Cor do texto: Branco se estiver dentro da barra, cor do saldo se fora
                           ctx.fillStyle = '#ffffff'; 
                           
+                          // Se a barra for muito pequena, joga o texto pra fora e colore
                           if (barHeight < 25) {
                               ctx.fillStyle = isPositive ? '#10b981' : '#f43f5e';
                               ctx.textBaseline = isPositive ? 'bottom' : 'top';
