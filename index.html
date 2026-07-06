@@ -242,8 +242,9 @@
           <div class="w-full max-w-6xl mx-auto mb-6">
              <h3 class="text-sm font-black text-white uppercase tracking-wider text-left">Evolução Mensal</h3>
           </div>
+          <!-- CONTAINER COM SCROLL HORIZONTAL -->
           <div class="w-full max-w-6xl mx-auto flex-1 overflow-x-auto scrollbar-hide pb-4">
-             <div class="relative min-h-[380px] min-w-[800px]">
+             <div id="trend-chart-wrapper" class="relative min-h-[380px] transition-all duration-300">
                 <canvas id="trendChart"></canvas>
              </div>
           </div>
@@ -1268,6 +1269,14 @@
               trendBalance.push(mInc - mExp);
           });
 
+          // Ajustar largura do container dinamicamente para garantir que as barras NUNCA encolham
+          const wrapper = document.getElementById('trend-chart-wrapper');
+          if (wrapper) {
+             // Dá 350 pixels de espaço livre para CADA mês (com um mínimo de 1000px)
+             const calculatedWidth = Math.max(1000, sortedMonths.length * 350);
+             wrapper.style.minWidth = calculatedWidth + 'px';
+          }
+
           if (trendChartInstance) {
               trendChartInstance.destroy();
           }
@@ -1283,9 +1292,9 @@
                           data: trendBalance,
                           borderColor: '#3b82f6', // Azul para Saldo
                           backgroundColor: '#3b82f6',
-                          borderWidth: 2,
+                          borderWidth: 3,
                           tension: 0.4,
-                          pointRadius: 4,
+                          pointRadius: 5,
                           pointBackgroundColor: '#080d1a',
                           pointBorderWidth: 2,
                           fill: false,
@@ -1296,8 +1305,8 @@
                           label: 'Receitas',
                           data: trendIncome,
                           backgroundColor: '#10b981', // Verde
-                          borderRadius: 4,
-                          barThickness: 32,
+                          borderRadius: 8,
+                          barThickness: 140, // BARRAS EXTREMAMENTE LARGAS
                           order: 1
                       },
                       {
@@ -1305,18 +1314,18 @@
                           label: 'Despesas',
                           data: trendExpense,
                           backgroundColor: '#f43f5e', // Vermelho
-                          borderRadius: 4,
-                          barThickness: 32,
+                          borderRadius: 8,
+                          barThickness: 140, // BARRAS EXTREMAMENTE LARGAS
                           order: 2
                       }
                   ]
               },
               options: {
+                  layout: {
+                      padding: { top: 30 } // Dá espaço extra no topo para os números não cortarem
+                  },
                   responsive: true,
                   maintainAspectRatio: false,
-                  layout: {
-                      padding: { top: 25 } // Dá um respiro em cima para caber o texto
-                  },
                   interaction: {
                       mode: 'index',
                       intersect: false,
@@ -1355,43 +1364,44 @@
                       }
                   }
               },
-              // Plugin customizado para desenhar os valores em cima das barras e pontos
+              // NOVO: Plugin customizado para desenhar os valores diretamente nas barras
               plugins: [{
                   id: 'trendLabels',
                   afterDatasetsDraw(chart) {
                       const { ctx, data } = chart;
                       ctx.save();
-                      ctx.font = 'bold 9px "Plus Jakarta Sans", sans-serif';
+                      ctx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
                       ctx.textAlign = 'center';
                       ctx.textBaseline = 'bottom';
                       
                       chart.data.datasets.forEach((dataset, i) => {
                           const meta = chart.getDatasetMeta(i);
-                          if (!meta.hidden) {
-                              meta.data.forEach((element, index) => {
-                                  const value = dataset.data[index];
-                                  if (!value && value !== 0) return;
+                          meta.data.forEach((datapoint, index) => {
+                              const value = dataset.data[index];
+                              
+                              // Pula a renderização de texto se a barra for zero
+                              if (value === 0 && dataset.type !== 'line') return;
+                              
+                              const formatted = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
+                              
+                              if (dataset.type === 'line') {
+                                  // Saldo da linha: Cor azul, posicionado acima do ponto
+                                  ctx.fillStyle = '#60a5fa'; 
+                                  ctx.fillText(formatted, datapoint.x, datapoint.y - 12);
+                              } else {
+                                  // Para as barras: Branco por padrão (dentro)
+                                  let yPos = datapoint.y + 18; 
+                                  ctx.fillStyle = '#ffffff'; 
                                   
-                                  // Formatação curta (ex: 1,5 mil) para não amontoar
-                                  let formatted = new Intl.NumberFormat('pt-BR', { notation: "compact", maximumFractionDigits: 1 }).format(value);
-                                  
-                                  let yPos = element.y - 5;
-                                  let xPos = element.x;
-                                  
-                                  if (i === 0) { // Linha de Saldo
-                                      ctx.fillStyle = '#60a5fa'; // Azul mais claro para leitura
-                                      yPos = element.y - 12; // Põe mais pra cima do ponto
-                                  } else if (i === 1) { // Receitas
-                                      ctx.fillStyle = '#34d399'; // Verde mais claro
-                                      if (value === 0) return; // Oculta o zero nas barras para poluir menos
-                                  } else if (i === 2) { // Despesas
-                                      ctx.fillStyle = '#fb7185'; // Vermelho mais claro
-                                      if (value === 0) return;
+                                  // Se a barra for menor que 25px, joga o texto pra cima e colore com a cor da barra
+                                  if (Math.abs(datapoint.base - datapoint.y) < 25) {
+                                      yPos = datapoint.y - 5;
+                                      ctx.fillStyle = i === 1 ? '#10b981' : '#f43f5e'; 
                                   }
                                   
-                                  ctx.fillText(formatted, xPos, yPos);
-                              });
-                          }
+                                  ctx.fillText(formatted, datapoint.x, yPos);
+                              }
+                          });
                       });
                       ctx.restore();
                   }
