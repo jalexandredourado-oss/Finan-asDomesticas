@@ -238,10 +238,14 @@
         </div>
 
         <!-- NOVO GRÁFICO DE TENDÊNCIA E EVOLUÇÃO -->
-        <div class="bg-card-dark p-5 rounded-3xl flex flex-col h-auto min-h-[450px]">
-          <h3 class="text-sm font-black text-white uppercase tracking-wider mb-4 w-full text-left">Evolução Mensal</h3>
-          <div class="w-full flex-1 relative min-h-[350px]">
-             <canvas id="trendChart"></canvas>
+        <div class="w-screen relative left-1/2 -translate-x-1/2 bg-card-dark py-8 px-4 md:px-8 mt-4 border-y border-slate-800 shadow-2xl flex flex-col h-auto min-h-[480px]">
+          <div class="w-full max-w-6xl mx-auto mb-6">
+             <h3 class="text-sm font-black text-white uppercase tracking-wider text-left">Evolução Mensal</h3>
+          </div>
+          <div class="w-full max-w-6xl mx-auto flex-1 overflow-x-auto scrollbar-hide pb-4">
+             <div class="relative min-h-[380px] min-w-[800px]">
+                <canvas id="trendChart"></canvas>
+             </div>
           </div>
         </div>
 
@@ -1293,7 +1297,7 @@
                           data: trendIncome,
                           backgroundColor: '#10b981', // Verde
                           borderRadius: 4,
-                          barThickness: 66,
+                          barThickness: 32,
                           order: 1
                       },
                       {
@@ -1302,7 +1306,7 @@
                           data: trendExpense,
                           backgroundColor: '#f43f5e', // Vermelho
                           borderRadius: 4,
-                          barThickness: 66,
+                          barThickness: 32,
                           order: 2
                       }
                   ]
