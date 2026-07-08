@@ -463,15 +463,6 @@
                 <button type="button" id="btn-connect-cloud" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl font-bold text-xs uppercase shadow-md shadow-emerald-500/10">Sincronizar</button>
              </div>
           </div>
-          <div class="bg-card-dark p-6 rounded-3xl space-y-3">
-             <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Backup & Limpeza</h3>
-             <div class="grid grid-cols-2 gap-3">
-                <button type="button" id="btn-export-backup" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200">Exportar</button>
-                <label for="import-backup-file" class="py-3 bg-slate-900 border border-slate-800 rounded-xl font-bold text-xs text-slate-200 text-center cursor-pointer">Importar JSON</label>
-                <input type="file" id="import-backup-file" class="hidden" accept=".json" />
-             </div>
-             <button type="button" id="btn-danger-reset" class="w-full py-3 bg-rose-955 text-rose-400 border border-rose-900/30 rounded-xl font-bold text-xs uppercase">Apagar Dados</button>
-          </div>
         </div>
 
         <div id="settings-section-data" class="hidden space-y-4">
@@ -479,7 +470,7 @@
              <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Planilha de Dados (CSV)</h3>
              </div>
-             <p class="text-[10px] font-bold text-slate-500">Exporte ou importe os seus lançamentos em formato de planilha. Colunas: Tipo, Descrição, Categoria, Conta Origem, Forma de pagamento, Parcelamento, Valor, Data, Mês Ref.</p>
+             <p class="text-[10px] font-bold text-slate-500">Exporte ou importe os seus lançamentos em formato de planilha. O CSV agora utiliza os mesmos parâmetros de sistema do backup (JSON) para garantir uma cópia exata dos dados.</p>
              <div class="grid grid-cols-2 gap-3">
                 <label for="import-csv-file" class="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-xl flex items-center justify-center gap-2 border border-slate-700 font-black uppercase tracking-wider text-[10px] cursor-pointer transition-all">
                    <i data-lucide="file-down" class="w-4 h-4"></i> Importar
@@ -489,6 +480,7 @@
                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Exportar
                 </button>
              </div>
+             <button type="button" id="btn-danger-reset" class="w-full py-3 bg-rose-955 text-rose-400 border border-rose-900/30 rounded-xl font-bold text-xs uppercase mt-2">Apagar Dados</button>
           </div>
         </div>
       </section>
@@ -819,12 +811,12 @@
       const catKey = `categories_${LOCAL_KEY}`;
       if (getLocalCollection(catKey).length === 0) {
         const defaultCats = [
-          { id: crypto.randomUUID(), name: "Alimentação", type: "expense", budget: 300 },
-          { id: crypto.randomUUID(), name: "Moradia", type: "expense", budget: 750 },
-          { id: crypto.randomUUID(), name: "Transporte", type: "expense", budget: 150 },
-          { id: crypto.randomUUID(), name: "Lazer", type: "expense", budget: 100 },
-          { id: crypto.randomUUID(), name: "Salário", type: "income", budget: 0 },
-          { id: crypto.randomUUID(), name: "Investimentos", type: "income", budget: 0 }
+          { id: crypto.randomUUID(), name: "ALIMENTAÇÃO", type: "expense", budget: 300 },
+          { id: crypto.randomUUID(), name: "MORADIA", type: "expense", budget: 750 },
+          { id: crypto.randomUUID(), name: "TRANSPORTE", type: "expense", budget: 150 },
+          { id: crypto.randomUUID(), name: "LAZER", type: "expense", budget: 100 },
+          { id: crypto.randomUUID(), name: "SALÁRIO", type: "income", budget: 0 },
+          { id: crypto.randomUUID(), name: "INVESTIMENTOS", type: "income", budget: 0 }
         ];
         localStorage.setItem(catKey, JSON.stringify(defaultCats));
       }
@@ -832,9 +824,9 @@
       const cardKey = `cards_${LOCAL_KEY}`;
       if (getLocalCollection(cardKey).length === 0) {
         const defaultCards = [
-          { id: crypto.randomUUID(), name: "Carteira Dinheiro", details: "Físico", initial: 0 },
-          { id: crypto.randomUUID(), name: "Conta Bancária", details: "À Ordem", initial: 0 },
-          { id: crypto.randomUUID(), name: "Cartão de Crédito", details: "Limite", initial: 0 }
+          { id: crypto.randomUUID(), name: "CARTEIRA DINHEIRO", details: "Físico", initial: 0 },
+          { id: crypto.randomUUID(), name: "CONTA BANCÁRIA", details: "À Ordem", initial: 0 },
+          { id: crypto.randomUUID(), name: "CARTÃO DE CRÉDITO", details: "Limite", initial: 0 }
         ];
         localStorage.setItem(cardKey, JSON.stringify(defaultCards));
       }
@@ -1660,8 +1652,8 @@
        catSel.innerHTML = '<option value="" disabled selected>Selecione</option>';
        state.customCategories.filter(c => c.type === state.activeType).forEach(c => {
           const opt = document.createElement('option');
-          opt.value = c.name;
-          opt.textContent = c.name;
+          opt.value = c.name.toUpperCase();
+          opt.textContent = c.name.toUpperCase();
           catSel.appendChild(opt);
        });
        const manageOptCat = document.createElement('option');
@@ -1673,7 +1665,7 @@
        cardSel.innerHTML = '<option value="">Sem Conta / Geral</option>';
        state.customCards.forEach(c => {
           const opt = document.createElement('option');
-          opt.value = c.name;
+          opt.value = c.name.toUpperCase();
           opt.textContent = c.name.toUpperCase();
           cardSel.appendChild(opt);
        });
@@ -1686,8 +1678,8 @@
        methodSel.innerHTML = '';
        state.customMethods.forEach(m => {
           const opt = document.createElement('option');
-          opt.value = m.name;
-          opt.textContent = m.name;
+          opt.value = m.name.toUpperCase();
+          opt.textContent = m.name.toUpperCase();
           methodSel.appendChild(opt);
        });
        const manageOptMethod = document.createElement('option');
@@ -1771,9 +1763,9 @@
        catSelect.innerHTML = '';
        state.customCategories.filter(c => c.type === t.type).forEach(c => {
           const opt = document.createElement('option');
-          opt.value = c.name;
-          opt.textContent = c.name;
-          if(c.name === t.category) opt.selected = true;
+          opt.value = c.name.toUpperCase();
+          opt.textContent = c.name.toUpperCase();
+          if(c.name.toUpperCase() === (t.category || '').toUpperCase()) opt.selected = true;
           catSelect.appendChild(opt);
        });
        const manageOptCatEdit = document.createElement('option');
@@ -1799,9 +1791,9 @@
        methodSelect.innerHTML = '';
        state.customMethods.forEach(m => {
           const opt = document.createElement('option');
-          opt.value = m.name;
-          opt.textContent = m.name;
-          if(m.name === t.paymentMethod) opt.selected = true;
+          opt.value = m.name.toUpperCase();
+          opt.textContent = m.name.toUpperCase();
+          if(m.name.toUpperCase() === (t.paymentMethod || '').toUpperCase()) opt.selected = true;
           methodSelect.appendChild(opt);
        });
        const manageOptMethodEdit = document.createElement('option');
@@ -1813,9 +1805,9 @@
        cardSelect.innerHTML = '<option value="">Sem Conta</option>';
        state.customCards.forEach(c => {
           const opt = document.createElement('option');
-          opt.value = c.name;
-          opt.textContent = c.name;
-          if(c.name === t.cardUsed) opt.selected = true;
+          opt.value = c.name.toUpperCase();
+          opt.textContent = c.name.toUpperCase();
+          if(c.name.toUpperCase() === (t.cardUsed || '').toUpperCase()) opt.selected = true;
           cardSelect.appendChild(opt);
        });
        const manageOptCardEdit = document.createElement('option');
@@ -1830,11 +1822,17 @@
        e.preventDefault();
        const amt = parseBRLFloat(document.getElementById('transaction-amount').value);
        const desc = document.getElementById('transaction-desc').value.trim().toUpperCase();
-       const cat = document.getElementById('transaction-category').value;
+       const catVal = document.getElementById('transaction-category').value;
+       const cat = catVal === '__MANAGE__' ? '' : catVal.toUpperCase();
        const dateVal = document.getElementById('transaction-date').value;
        const billingMonth = document.getElementById('transaction-month').value;
-       const cardUsed = document.getElementById('transaction-card').value;
-       const paymentMethod = state.activeType === 'expense' ? document.getElementById('transaction-method').value : null;
+       
+       const cardVal = document.getElementById('transaction-card').value;
+       const cardUsed = cardVal === '__MANAGE__' ? null : (cardVal ? cardVal.toUpperCase() : null);
+       
+       const methodVal = document.getElementById('transaction-method').value;
+       const paymentMethod = state.activeType === 'expense' ? (methodVal === '__MANAGE__' ? null : (methodVal ? methodVal.toUpperCase() : null)) : null;
+
        const installmentsCount = state.isInstallment ? parseInt(document.getElementById('transaction-installments').value) || 1 : 1;
 
        if(!amt || amt <= 0 || !desc || !cat) {
@@ -1850,7 +1848,7 @@
           billingMonth,
           date: dateVal,
           paymentMethod,
-          cardUsed: cardUsed || null,
+          cardUsed: cardUsed,
           isInstallment: state.isInstallment,
           installmentsCount
        });
@@ -1873,11 +1871,19 @@
        const id = document.getElementById('edit-trans-id').value;
        const desc = document.getElementById('edit-trans-desc').value.trim().toUpperCase();
        const amt = parseBRLFloat(document.getElementById('edit-trans-amount').value);
-       const cat = document.getElementById('edit-trans-category').value;
+       
+       const catVal = document.getElementById('edit-trans-category').value;
+       const cat = catVal === '__MANAGE__' ? "OUTROS" : catVal.toUpperCase();
+       
        const dateVal = document.getElementById('edit-trans-date').value;
        const month = document.getElementById('edit-trans-month').value;
-       const method = document.getElementById('edit-trans-method').value;
-       const card = document.getElementById('edit-trans-card').value;
+       
+       const methodVal = document.getElementById('edit-trans-method').value;
+       const method = methodVal === '__MANAGE__' ? null : (methodVal ? methodVal.toUpperCase() : null);
+       
+       const cardVal = document.getElementById('edit-trans-card').value;
+       const card = cardVal === '__MANAGE__' ? null : (cardVal ? cardVal.toUpperCase() : null);
+       
        const installmentsCount = parseInt(document.getElementById('edit-trans-installments-count').value) || 1;
 
        const totalAmt = amt * installmentsCount;
@@ -1888,8 +1894,8 @@
           category: cat,
           date: dateVal,
           billingMonth: month,
-          paymentMethod: method || null,
-          cardUsed: card || null
+          paymentMethod: method,
+          cardUsed: card
        });
 
        document.getElementById('edit-transaction-modal').classList.add('hidden');
@@ -1898,7 +1904,7 @@
 
     document.getElementById('form-add-card').onsubmit = async (e) => {
        e.preventDefault();
-       const name = document.getElementById('new-card-name').value.trim();
+       const name = document.getElementById('new-card-name').value.trim().toUpperCase();
        const details = document.getElementById('new-card-details').value.trim();
        const initial = 0; 
 
@@ -1910,7 +1916,7 @@
 
     document.getElementById('form-add-category').onsubmit = async (e) => {
        e.preventDefault();
-       const name = document.getElementById('new-category-name').value.trim();
+       const name = document.getElementById('new-category-name').value.trim().toUpperCase();
        const type = document.getElementById('new-category-type').value;
        const budget = 0; 
 
@@ -2060,7 +2066,7 @@
     document.getElementById('form-quick-add-cat').onsubmit = async (e) => {
        e.preventDefault();
        const input = document.getElementById('quick-new-cat-name');
-       const name = input.value.trim();
+       const name = input.value.trim().toUpperCase();
        if (!name) return;
        
        await DB.addDoc(`categories_${LOCAL_KEY}`, { name, type: state.activeType, budget: 0 });
@@ -2082,7 +2088,7 @@
     window.editQuickCategory = function(id, oldName) {
        const itemDiv = document.getElementById(`quick-cat-item-${id}`);
        itemDiv.innerHTML = `
-          <input type="text" id="edit-cat-input-${id}" value="${oldName}" class="flex-1 p-2 bg-input-dark border border-slate-700 rounded-lg text-xs font-bold text-white outline-none focus:border-emerald-500" />
+          <input type="text" id="edit-cat-input-${id}" value="${oldName}" class="flex-1 p-2 bg-input-dark border border-slate-700 rounded-lg text-xs font-bold text-white outline-none focus:border-emerald-500 uppercase" />
           <button type="button" onclick="saveQuickCategory('${id}', '${oldName}')" class="p-2 bg-emerald-600 hover:bg-emerald-500 transition-colors text-slate-955 rounded-lg shadow-md"><i data-lucide="check" class="w-4 h-4"></i></button>
        `;
        if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -2092,7 +2098,7 @@
     };
 
     window.saveQuickCategory = async function(id, oldName) {
-       const newName = document.getElementById(`edit-cat-input-${id}`).value.trim();
+       const newName = document.getElementById(`edit-cat-input-${id}`).value.trim().toUpperCase();
        if (!newName || newName === oldName) {
            renderQuickCatList();
            return;
@@ -2103,7 +2109,7 @@
        let localTxs = getLocalCollection(`transactions_${LOCAL_KEY}`);
        let changed = false;
        localTxs = localTxs.map(t => {
-           if (t.category === oldName) {
+           if ((t.category || '').toUpperCase() === oldName.toUpperCase()) {
                changed = true;
                return { ...t, category: newName };
            }
@@ -2175,7 +2181,7 @@
 
     document.getElementById('form-quick-add-card').onsubmit = async (e) => {
        e.preventDefault();
-       const name = document.getElementById('quick-new-card-name').value.trim();
+       const name = document.getElementById('quick-new-card-name').value.trim().toUpperCase();
        const details = document.getElementById('quick-new-card-details').value.trim();
        if (!name) return;
        
@@ -2199,7 +2205,7 @@
     window.editQuickCard = function(id, oldName) {
        const itemDiv = document.getElementById(`quick-card-item-${id}`);
        itemDiv.innerHTML = `
-          <input type="text" id="edit-card-input-${id}" value="${oldName}" class="flex-1 p-2 bg-input-dark border border-slate-700 rounded-lg text-xs font-bold text-white outline-none focus:border-emerald-500" />
+          <input type="text" id="edit-card-input-${id}" value="${oldName}" class="flex-1 p-2 bg-input-dark border border-slate-700 rounded-lg text-xs font-bold text-white outline-none focus:border-emerald-500 uppercase" />
           <button type="button" onclick="saveQuickCard('${id}', '${oldName}')" class="p-2 bg-emerald-600 hover:bg-emerald-500 transition-colors text-slate-955 rounded-lg shadow-md"><i data-lucide="check" class="w-4 h-4"></i></button>
        `;
        if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -2209,7 +2215,7 @@
     };
 
     window.saveQuickCard = async function(id, oldName) {
-       const newName = document.getElementById(`edit-card-input-${id}`).value.trim();
+       const newName = document.getElementById(`edit-card-input-${id}`).value.trim().toUpperCase();
        if (!newName || newName === oldName) {
            renderQuickCardList();
            return;
@@ -2220,7 +2226,7 @@
        let localTxs = getLocalCollection(`transactions_${LOCAL_KEY}`);
        let changed = false;
        localTxs = localTxs.map(t => {
-           if (t.cardUsed === oldName) {
+           if ((t.cardUsed || '').toUpperCase() === oldName.toUpperCase()) {
                changed = true;
                return { ...t, cardUsed: newName };
            }
@@ -2430,72 +2436,56 @@
        document.getElementById('cloud-couple-code').value = code;
     };
 
-    document.getElementById('btn-export-backup').onclick = () => {
-       const data = {
-          transactions: state.transactions,
-          categories: state.customCategories,
-          cards: state.customCards,
-          methods: state.customMethods
-       };
-       const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-       const a = document.createElement('a');
-       a.setAttribute("href", str);
-       a.setAttribute("download", `FinancasPro_Backup_${new Date().toISOString().split('T')[0]}.json`);
-       document.body.appendChild(a);
-       a.click();
-       a.remove();
-       showToast("Backup descarregado com sucesso!", "success");
-    };
-
-    document.getElementById('import-backup-file').onchange = (e) => {
-       const file = e.target.files[0];
-       if (!file) return;
-       const reader = new FileReader();
-       reader.onload = (event) => {
-          try {
-             const data = JSON.parse(event.target.result);
-             if (data.transactions && data.categories && data.cards) {
-                localStorage.setItem(`transactions_${LOCAL_KEY}`, JSON.stringify(data.transactions));
-                localStorage.setItem(`categories_${LOCAL_KEY}`, JSON.stringify(data.categories));
-                localStorage.setItem(`cards_${LOCAL_KEY}`, JSON.stringify(data.cards));
-                if (data.methods) localStorage.setItem(`methods_${LOCAL_KEY}`, JSON.stringify(data.methods));
-                showToast("Ficheiro restaurado!", "success");
-                renderAll();
-             }
-          } catch {
-             showToast("Ficheiro de backup corrompido ou inválido!", "error");
-          }
-       };
-       reader.readAsText(file);
-    };
-
     document.getElementById('btn-export-csv').onclick = () => {
        if (state.transactions.length === 0) {
           showToast("Nenhum dado para exportar!", "error");
           return;
        }
-       const headers = ["Tipo", "Descrição", "Categoria", "Conta Origem", "Forma de pagamento", "Parcelamento", "Valor", "Data", "Mês Ref"];
-       const rows = state.transactions.map(t => {
-          const tipo = `"${t.type === 'income' ? 'Receita' : 'Despesa'}"`;
-          const desc = `"${(t.description || '').replace(/"/g, '""')}"`;
-          const cat = `"${(t.category || '').replace(/"/g, '""')}"`;
-          const acc = `"${(t.cardUsed || 'Nenhuma').replace(/"/g, '""')}"`;
-          const method = `"${(t.paymentMethod || '').replace(/"/g, '""')}"`;
-          const inst = `"${t.isInstallment ? t.installmentsCount + 'x' : 'À vista'}"`;
-          const val = `"${t.amount.toFixed(2).replace('.', ',')}"`;
-          const date = `"${t.date || ''}"`;
-          const month = `"${t.billingMonth || ''}"`;
-          return [tipo, desc, cat, acc, method, inst, val, date, month].join(";");
+       
+       const headers = ["Id", "Tipo", "Categoria", "Descrição", "Valor", "Data da transação", "Mês ref.", "Conta origem", "Forma de pagamento", "Parcelamento"];
+       
+       const rows = state.transactions.map((t, index) => {
+          const id = index + 1;
+          const tipo = t.type === 'income' ? 'Receita' : 'Despesa';
+          let valor = parseFloat(t.amount) || 0;
+          if (t.type === 'expense') valor = -Math.abs(valor);
+          
+          let dataTrans = t.date ? formatDate(t.date) : '';
+          let mesRef = t.billingMonth || '';
+          
+          const rowValues = [
+             id,
+             tipo,
+             t.category || '',
+             t.description || '',
+             formatBRL(valor),
+             dataTrans ? `"=""${dataTrans}"""` : '""',
+             mesRef ? `"=""${mesRef}"""` : '""',
+             t.cardUsed || 'Nenhuma',
+             t.paymentMethod || 'Nenhuma',
+             t.isInstallment ? `${t.installmentsCount}x` : 'Não'
+          ];
+
+          return rowValues.map(val => {
+             // Mantém a formatação textual forçada do Excel para datas
+             if (typeof val === 'string' && val.startsWith('"="')) return val;
+             
+             if (val === null || val === undefined) return '""';
+             return `"${String(val).replace(/"/g, '""')}"`;
+          }).join(";");
        });
 
-       const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + headers.join(";") + "\n" + rows.join("\n");
-       const encodedUri = encodeURI(csvContent);
+       const csvContent = "\uFEFF" + headers.join(";") + "\n" + rows.join("\n");
+       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+       const url = URL.createObjectURL(blob);
+       
        const link = document.createElement("a");
-       link.setAttribute("href", encodedUri);
+       link.setAttribute("href", url);
        link.setAttribute("download", `Planilha_FinancasPro_${new Date().toISOString().split('T')[0]}.csv`);
        document.body.appendChild(link);
        link.click();
        link.remove();
+       URL.revokeObjectURL(url);
        
        showToast("Planilha exportada com sucesso!", "success");
     };
@@ -2517,47 +2507,143 @@
               let importedCount = 0;
               let localTxs = JSON.parse(localStorage.getItem(`transactions_${LOCAL_KEY}`) || '[]');
 
+              // Lendo os cabeçalhos para saber se é o formato antigo ou o novo padrão JSON
+              const headerRegex = /(?:^|;)(?:"([^"]*(?:""[^"]*)*)"|([^;]*))/g;
+              let headersRaw = [];
+              let hMatch;
+              while ((hMatch = headerRegex.exec(lines[0])) !== null) {
+                  headersRaw.push(hMatch[1] !== undefined ? hMatch[1].replace(/""/g, '"') : hMatch[2]);
+              }
+              if (headersRaw.length > 0 && headersRaw[headersRaw.length-1] === '') headersRaw.pop();
+              
+              const isJsonFormat = headersRaw.includes("id") && headersRaw.includes("type") && headersRaw.includes("amount");
+              const isNewCsvFormat = headersRaw.includes("Id") && headersRaw.includes("Tipo") && headersRaw.includes("Valor");
+
               for (let i = 1; i < lines.length; i++) {
                  const rowRegex = /(?:^|;)(?:"([^"]*(?:""[^"]*)*)"|([^;]*))/g;
                  let row = [];
                  let match;
-                 while (match = rowRegex.exec(lines[i])) {
+                 while ((match = rowRegex.exec(lines[i])) !== null) {
                      row.push(match[1] !== undefined ? match[1].replace(/""/g, '"') : match[2]);
                  }
                  if (row.length > 0 && row[row.length-1] === '') row.pop();
 
-                 if (row.length >= 8) {
-                    const tipoRaw = row[0] ? row[0].trim().toUpperCase() : 'DESPESA';
-                    const type = (tipoRaw === 'RECEITA') ? 'income' : 'expense';
-                    const desc = row[1] || "Lançamento Importado";
-                    const cat = row[2] || "Outros";
-                    const acc = (!row[3] || row[3] === 'Nenhuma') ? null : row[3];
-                    const method = row[4] || null;
-                    const instStr = row[5] || 'À vista';
-                    const valStr = (row[6] || '0').replace(',', '.');
-                    
-                    const dateVal = row[7] || new Date().toISOString().split('T')[0];
-                    const monthVal = row[8] || state.selectedMonth;
+                 if (isJsonFormat) {
+                     // NOVO FORMATO (Idêntico ao JSON)
+                     if (row.length > 0 && row.some(v => v !== undefined && v !== '')) {
+                         let newTx = {};
+                         headersRaw.forEach((h, idx) => {
+                             let val = row[idx];
+                             if (val === undefined || val === "") return;
+                             
+                             // Limpa a formatação de texto forçado do Excel caso exista (ex: ="01/06/2026")
+                             if (typeof val === 'string' && val.startsWith('="') && val.endsWith('"')) {
+                                 val = val.substring(2, val.length - 1);
+                             }
 
-                    const isInst = instStr !== 'À vista' && instStr.includes('x');
-                    const instCount = isInst ? parseInt(instStr) : 1;
-                    const amt = parseFloat(valStr) || 0;
+                             if (h === "amount") val = parseFloat(val) || 0;
+                             if (h === "installmentsCount") val = parseInt(val) || 1;
+                             if (h === "isInstallment" || h === "paid") val = String(val).toLowerCase() === "true";
+                             if (h === "paidMonths") {
+                                 try { val = JSON.parse(val); } catch(err) { val = {}; }
+                             }
+                             // Converte de volta para YYYY-MM-DD caso seja importado neste app
+                             if (h === "date" && val && val.includes("/")) {
+                                 const p = val.split("/");
+                                 if (p.length === 3) val = `${p[2]}-${p[1]}-${p[0]}`;
+                             }
+                             newTx[h] = val;
+                         });
+                         
+                         if (!newTx.id) newTx.id = crypto.randomUUID();
+                         if (!newTx.createdAt) newTx.createdAt = new Date().toISOString();
+                         
+                         localTxs.push(newTx);
+                         importedCount++;
+                     }
+                 } else if (isNewCsvFormat) {
+                     // NOVO CSV AMIGÁVEL (10 COLUNAS)
+                     if (row.length >= 7) {
+                         const type = (row[1] && row[1].trim().toUpperCase() === 'RECEITA') ? 'income' : 'expense';
+                         const cat = row[2] || "Outros";
+                         const desc = row[3] || "Lançamento Importado";
+                         
+                         // Tratamento para remover o 'R$' e converter o valor formatado para número lido pela máquina
+                         let valStr = row[4] || '0';
+                         valStr = valStr.replace(/[R$\s]/g, '').replace(/\./g, '').replace(',', '.');
+                         let amt = parseFloat(valStr) || 0;
+                         amt = Math.abs(amt);
 
-                    localTxs.push({
-                       id: crypto.randomUUID(),
-                       description: desc.toUpperCase(),
-                       amount: amt,
-                       type: type,
-                       category: cat,
-                       billingMonth: monthVal,
-                       date: dateVal,
-                       paymentMethod: method,
-                       cardUsed: acc,
-                       isInstallment: isInst,
-                       installmentsCount: instCount,
-                       createdAt: new Date().toISOString()
-                    });
-                    importedCount++;
+                         let dateVal = row[5] || '';
+                         if (dateVal.startsWith('="') && dateVal.endsWith('"')) dateVal = dateVal.substring(2, dateVal.length - 1);
+                         if (dateVal && dateVal.includes("/")) {
+                             const p = dateVal.split("/");
+                             if (p.length === 3) dateVal = `${p[2]}-${p[1]}-${p[0]}`;
+                         } else if (!dateVal) {
+                             dateVal = new Date().toISOString().split('T')[0];
+                         }
+
+                         let monthVal = row[6] || state.selectedMonth;
+                         if (monthVal.startsWith('="') && monthVal.endsWith('"')) monthVal = monthVal.substring(2, monthVal.length - 1);
+
+                         const acc = (!row[7] || row[7] === 'Nenhuma') ? null : row[7];
+                         const method = (!row[8] || row[8] === 'Nenhuma') ? null : row[8];
+                         
+                         const instStr = row[9] || 'Não';
+                         const isInst = instStr !== 'Não' && instStr.toLowerCase() !== 'nao';
+                         const instCount = isInst ? parseInt(instStr) || 1 : 1;
+
+                         localTxs.push({
+                           id: crypto.randomUUID(),
+                           description: desc.toUpperCase(),
+                           amount: amt,
+                           type: type,
+                           category: cat,
+                           billingMonth: monthVal,
+                           date: dateVal,
+                           paymentMethod: method,
+                           cardUsed: acc,
+                           isInstallment: isInst,
+                           installmentsCount: instCount,
+                           createdAt: new Date().toISOString()
+                         });
+                         importedCount++;
+                     }
+                 } else {
+                     // FORMATO ANTIGO LEGADO
+                     if (row.length >= 8) {
+                        const tipoRaw = row[0] ? row[0].trim().toUpperCase() : 'DESPESA';
+                        const type = (tipoRaw === 'RECEITA') ? 'income' : 'expense';
+                        const desc = row[1] || "Lançamento Importado";
+                        const cat = row[2] || "Outros";
+                        const acc = (!row[3] || row[3] === 'Nenhuma') ? null : row[3];
+                        const method = row[4] || null;
+                        const instStr = row[5] || 'À vista';
+                        const valStr = (row[6] || '0').replace(',', '.');
+                        
+                        const dateVal = row[7] || new Date().toISOString().split('T')[0];
+                        const monthVal = row[8] || state.selectedMonth;
+
+                        const isInst = instStr !== 'À vista' && instStr.includes('x');
+                        const instCount = isInst ? parseInt(instStr) : 1;
+                        const amt = parseFloat(valStr) || 0;
+
+                        localTxs.push({
+                           id: crypto.randomUUID(),
+                           description: desc.toUpperCase(),
+                           amount: amt,
+                           type: type,
+                           category: cat,
+                           billingMonth: monthVal,
+                           date: dateVal,
+                           paymentMethod: method,
+                           cardUsed: acc,
+                           isInstallment: isInst,
+                           installmentsCount: instCount,
+                           createdAt: new Date().toISOString()
+                        });
+                        importedCount++;
+                     }
                  }
               }
 
@@ -2576,7 +2662,7 @@
           }
           e.target.value = '';
        };
-       reader.readAsText(file);
+       reader.readAsText(file, 'windows-1252');
     };
 
     document.getElementById('btn-danger-reset').onclick = () => {
