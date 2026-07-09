@@ -391,13 +391,7 @@
       <!-- ABA 4: AJUSTES -->
       <section id="tab-settings" class="tab-content hidden max-w-2xl mx-auto space-y-6 animate-in fade-in duration-200">
         <div class="grid grid-cols-2 md:flex gap-1 p-1 bg-card-dark rounded-xl border border-slate-800">
-          <button id="settings-tab-cards" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 flex items-center justify-center gap-1">
-            <i data-lucide="credit-card" class="w-3.5 h-3.5"></i> Contas
-          </button>
-          <button id="settings-tab-categories" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1">
-            <i data-lucide="tag" class="w-3.5 h-3.5"></i> Categorias
-          </button>
-          <button id="settings-tab-sync" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1">
+          <button id="settings-tab-sync" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 flex items-center justify-center gap-1">
             <i data-lucide="cloud" class="w-3.5 h-3.5"></i> Partilha Nuvem
           </button>
           <button id="settings-tab-data" class="flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1">
@@ -405,38 +399,7 @@
           </button>
         </div>
 
-        <div id="settings-section-cards" class="space-y-4">
-          <form id="form-add-card" class="bg-card-dark p-6 rounded-3xl space-y-4">
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest font-bold">Criar Nova Conta Bancária</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input type="text" id="new-card-name" placeholder="Banco" class="p-3.5 rounded-xl text-sm" required />
-              <input type="text" id="new-card-details" placeholder="Ag./Conta" class="p-3.5 rounded-xl text-sm" />
-            </div>
-            <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl flex items-center justify-center gap-1.5 shadow-lg font-bold uppercase tracking-wider text-xs">
-              <i data-lucide="plus" class="w-4 h-4"></i> Cadastrar conta
-            </button>
-          </form>
-          <div id="cards-manager-list" class="space-y-3"></div>
-        </div>
-
-        <div id="settings-section-categories" class="hidden space-y-4">
-          <form id="form-add-category" class="bg-card-dark p-6 rounded-3xl space-y-4">
-            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Adicionar Nova Categoria</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <input type="text" id="new-category-name" placeholder="Ex: Alimentação, Compras, Casa" class="p-3.5 rounded-xl text-sm" required />
-              <select id="new-category-type" class="p-3.5 rounded-xl text-xs font-bold uppercase cursor-pointer">
-                <option value="expense">Despesa</option>
-                <option value="income">Receita</option>
-              </select>
-            </div>
-            <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-slate-955 rounded-xl flex items-center justify-center gap-1.5 shadow-lg font-bold uppercase tracking-wider text-xs">
-              <i data-lucide="plus" class="w-4 h-4"></i> Criar Categoria
-            </button>
-          </form>
-          <div id="categories-manager-list" class="space-y-3"></div>
-        </div>
-
-        <div id="settings-section-sync" class="hidden space-y-4">
+        <div id="settings-section-sync" class="space-y-4">
           <div class="bg-card-dark p-6 rounded-3xl space-y-4">
              <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                 <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest">Base de Dados Cloud (Firebase)</h3>
@@ -1299,21 +1262,13 @@
                       intersect: false,
                   },
                   plugins: {
+
                       legend: {
                           labels: { color: '#94a3b8', font: { size: 10, family: 'Plus Jakarta Sans' }, usePointStyle: true }
                       },
-                      tooltip: {
-                          callbacks: {
-                              label: function(context) {
-                                  let label = context.dataset.label || '';
-                                  if (label) label += ': ';
-                                  if (context.parsed.y !== null) {
-                                      label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.y);
-                                  }
-                                  return label;
-                              }
-                          }
-                      }
+tooltip: {
+    enabled: false
+}
                   },
                   scales: {
                       x: {
@@ -1568,88 +1523,28 @@
        if (typeof lucide !== 'undefined') lucide.createIcons();
     }
 
-    function renderFidCategories() {
-       const container = document.getElementById('categories-manager-list');
-       if (!container) return;
-       container.innerHTML = '';
-       if (state.customCategories.length === 0) {
-          container.innerHTML = `<p class="text-center text-[10px] uppercase font-bold text-slate-500 py-4">Nenhuma categoria registrada</p>`;
-          return;
-       }
-       state.customCategories.forEach(c => {
-          const div = document.createElement('div');
-          div.className = "bg-card-dark p-4 rounded-2xl flex justify-between items-center";
-          div.innerHTML = `
-             <div class="flex items-center gap-3">
-                <span class="w-2.5 h-2.5 rounded-full ${c.type === 'income' ? 'bg-emerald-500' : 'bg-rose-500'}"></span>
-                <span class="text-xs font-bold text-white uppercase">${c.name}</span>
-             </div>
-             <button class="delete-cat-btn text-slate-500 hover:text-rose-500 transition-colors p-2 bg-slate-900 rounded-xl" data-id="${c.id}">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-             </button>
-          `;
-          div.querySelector('.delete-cat-btn').onclick = () => {
-             showConfirm("Remover Categoria", `Deseja remover a categoria ${c.name}?`, async () => {
-                await DB.deleteDoc(`categories_${LOCAL_KEY}`, c.id);
-                showToast("Categoria removida!", "success");
-                renderFidCategories();
-             });
-          };
-          container.appendChild(div);
-       });
-       if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
+    
 
-    function renderFidCards() {
-       const container = document.getElementById('cards-manager-list');
-       if (!container) return;
-       container.innerHTML = '';
-       if (state.customCards.length === 0) {
-          container.innerHTML = `<p class="text-center text-[10px] uppercase font-bold text-slate-500 py-4">Nenhuma conta registrada</p>`;
-          return;
-       }
-       state.customCards.forEach(c => {
-          const div = document.createElement('div');
-          div.className = "bg-card-dark p-4 rounded-2xl flex justify-between items-center";
-          div.innerHTML = `
-             <div>
-                <span class="text-xs font-bold text-white uppercase">${c.name}</span>
-                <p class="text-[9px] text-slate-550 font-extrabold uppercase mt-0.5">Ag./Conta: ${c.details || 'NÃO DEFINIDA'}</p>
-             </div>
-             <button class="delete-card-btn text-slate-500 hover:text-rose-500 transition-colors p-2 bg-slate-900 rounded-xl" data-id="${c.id}">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
-             </button>
-          `;
-          div.querySelector('.delete-card-btn').onclick = () => {
-             showConfirm("Remover Conta", `Deseja remover a conta ${c.name}?`, async () => {
-                await DB.deleteDoc(`cards_${LOCAL_KEY}`, c.id);
-                showToast("Conta removida!", "success");
-                renderFidCards();
-             });
-          };
-          container.appendChild(div);
-       });
-       if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
 
-    function populateFormSelects() {
+function populateFormSelects() {
        const monthSel = document.getElementById('transaction-month');
        if (!monthSel) return;
        monthSel.innerHTML = '';
-       const base = new Date();
-       for(let i = -3; i <= 6; i++) {
-          const d = new Date(base.getFullYear(), base.getMonth() + i, 1);
-          const val = `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-          const displayVal = `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(-2)}`;
+       const currentMonth = new Date().getMonth() + 1;
+       
+       for(let i = 1; i <= 12; i++) {
+          const val = `${String(i).padStart(2,'0')}/2026`;
+          const displayVal = val;
           const opt = document.createElement('option');
           opt.value = val;
           opt.textContent = displayVal;
-          if (i === 0) opt.selected = true;
+          if (i === currentMonth) opt.selected = true;
           monthSel.appendChild(opt);
        }
 
        const catSel = document.getElementById('transaction-category');
-       catSel.innerHTML = '<option value="" disabled selected>Selecione</option>';
+       
+catSel.innerHTML = '<option value="" disabled selected>Selecione</option>';
        state.customCategories.filter(c => c.type === state.activeType).forEach(c => {
           const opt = document.createElement('option');
           opt.value = c.name.toUpperCase();
@@ -1768,26 +1663,28 @@
           if(c.name.toUpperCase() === (t.category || '').toUpperCase()) opt.selected = true;
           catSelect.appendChild(opt);
        });
-       const manageOptCatEdit = document.createElement('option');
+
+
+
+const manageOptCatEdit = document.createElement('option');
        manageOptCatEdit.value = "__MANAGE__";
        manageOptCatEdit.textContent = "+ Nova / Editar...";
        catSelect.appendChild(manageOptCatEdit);
 
        const monthSelect = document.getElementById('edit-trans-month');
        monthSelect.innerHTML = '';
-       const base = new Date();
-       for(let i = -3; i <= 6; i++) {
-          const d = new Date(base.getFullYear(), base.getMonth() + i, 1);
-          const val = `${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-          const displayVal = `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(-2)}`;
+       for(let i = 1; i <= 12; i++) {
+          const val = `${String(i).padStart(2,'0')}/2026`;
+          const displayVal = val;
           const opt = document.createElement('option');
           opt.value = val;
           opt.textContent = displayVal;
           if(val === t.billingMonth) opt.selected = true;
           monthSelect.appendChild(opt);
        }
+const methodSelect = document.getElementById('edit-trans-method');
 
-       const methodSelect = document.getElementById('edit-trans-method');
+
        methodSelect.innerHTML = '';
        state.customMethods.forEach(m => {
           const opt = document.createElement('option');
@@ -1902,30 +1799,6 @@
        showToast("Registro atualizado com sucesso!", "success");
     };
 
-    document.getElementById('form-add-card').onsubmit = async (e) => {
-       e.preventDefault();
-       const name = document.getElementById('new-card-name').value.trim().toUpperCase();
-       const details = document.getElementById('new-card-details').value.trim();
-       const initial = 0; 
-
-       await DB.addDoc(`cards_${LOCAL_KEY}`, { name, details, initial });
-       document.getElementById('form-add-card').reset();
-       showToast("Nova conta criada!", "success");
-       renderFidCards();
-    };
-
-    document.getElementById('form-add-category').onsubmit = async (e) => {
-       e.preventDefault();
-       const name = document.getElementById('new-category-name').value.trim().toUpperCase();
-       const type = document.getElementById('new-category-type').value;
-       const budget = 0; 
-
-       await DB.addDoc(`categories_${LOCAL_KEY}`, { name, type, budget });
-       document.getElementById('form-add-category').reset();
-       showToast("Nova categoria salva!", "success");
-       renderFidCategories();
-    };
-
     document.getElementById('btn-type-expense').onclick = () => {
        state.activeType = 'expense';
        document.getElementById('btn-type-expense').className = "px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-rose-600 text-white transition-all";
@@ -1987,25 +1860,13 @@
           settingsTabBtn.click();
        }
 
-       document.getElementById('settings-tab-cards').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1";
-       document.getElementById('settings-tab-categories').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1";
        document.getElementById('settings-tab-sync').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1";
        document.getElementById('settings-tab-data').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all text-slate-400 flex items-center justify-center gap-1";
 
-       document.getElementById('settings-section-cards').classList.add('hidden');
-       document.getElementById('settings-section-categories').classList.add('hidden');
        document.getElementById('settings-section-sync').classList.add('hidden');
        document.getElementById('settings-section-data').classList.add('hidden');
 
-       if (subTab === 'cards') {
-          document.getElementById('settings-tab-cards').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-950 font-black flex items-center justify-center gap-1";
-          document.getElementById('settings-section-cards').classList.remove('hidden');
-          renderFidCards();
-       } else if (subTab === 'categories') {
-          document.getElementById('settings-tab-categories').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 font-black flex items-center justify-center gap-1";
-          document.getElementById('settings-section-categories').classList.remove('hidden');
-          renderFidCategories();
-       } else if (subTab === 'sync') {
+       if (subTab === 'sync' || !subTab) {
           document.getElementById('settings-tab-sync').className = "flex-1 py-2.5 rounded-lg text-[10px] sm:text-xs font-black uppercase transition-all bg-emerald-600 text-slate-955 font-black flex items-center justify-center gap-1";
           document.getElementById('settings-section-sync').classList.remove('hidden');
        } else if (subTab === 'data') {
@@ -2014,8 +1875,6 @@
        }
     };
 
-    document.getElementById('settings-tab-cards').onclick = () => openAjustesModal('cards');
-    document.getElementById('settings-tab-categories').onclick = () => openAjustesModal('categories');
     document.getElementById('settings-tab-sync').onclick = () => openAjustesModal('sync');
     document.getElementById('settings-tab-data').onclick = () => openAjustesModal('data');
 
@@ -2060,7 +1919,6 @@
     document.getElementById('btn-close-quick-cat').onclick = () => {
        document.getElementById('quick-manage-cat-modal').classList.add('hidden');
        populateFormSelects(); 
-       renderFidCategories(); 
     };
 
     document.getElementById('form-quick-add-cat').onsubmit = async (e) => {
@@ -2176,7 +2034,6 @@
     document.getElementById('btn-close-quick-cards').onclick = () => {
        document.getElementById('quick-manage-cards-modal').classList.add('hidden');
        populateFormSelects(); 
-       renderFidCards(); 
     };
 
     document.getElementById('form-quick-add-card').onsubmit = async (e) => {
