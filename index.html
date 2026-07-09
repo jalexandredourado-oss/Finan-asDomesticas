@@ -255,9 +255,28 @@
       <!-- ABA PRESTAÇÕES -->
       <section id="tab-installments" class="tab-content hidden space-y-6 animate-in fade-in duration-300">
         <div class="bg-card-dark p-6 rounded-3xl flex flex-col min-h-[520px] overflow-hidden">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-sm font-black text-white uppercase tracking-wider">Minhas Prestações</h3>
-          </div>
+          
+
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <h3 class="text-sm font-black text-white uppercase tracking-wider">
+            Minhas Prestações
+        </h3>
+
+        <div class="mt-3">
+            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                Total das Compras Parceladas
+            </p>
+
+            <p id="installments-total"
+               class="text-1xl font-black text-emerald-400">
+               R$ 0,00
+            </p>
+        </div>
+    </div>
+</div>
+
+
           <div class="flex-1 overflow-y-auto overflow-x-hidden">
             <table class="w-full text-left border-collapse min-w-[500px]">
               <thead>
@@ -1338,8 +1357,25 @@ tooltip: {
       if (activityList) {
           activityList.innerHTML = "";
           const parcelas = state.transactions
-          .filter(t => t.type === "expense" && t.isInstallment)
-          .sort((a,b)=>new Date(b.date)-new Date(a.date));
+    .filter(t =>
+        t.type === "expense" &&
+        Number(t.installmentsCount || 1) >= 2
+    )
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+
+
+const totalPrestacoes = parcelas.reduce((soma, item) => {
+    return soma + Number(item.amount || 0);
+}, 0);
+
+const totalElement = document.getElementById("installments-total");
+
+if (totalElement) {
+    totalElement.textContent = formatBRL(totalPrestacoes);
+}
+
+
 
           if(parcelas.length===0){
               activityList.innerHTML=`
@@ -1383,8 +1419,15 @@ tooltip: {
       const container = document.getElementById('history-list');
       if (!container) return;
       container.innerHTML = '';
+
       
       let list = expandedTransactions().filter(t => t.displayMonth === state.selectedMonth);
+
+list.sort((a, b) => {
+    const dataA = new Date(a.createdAt || a.date);
+    const dataB = new Date(b.createdAt || b.date);
+    return dataB - dataA;
+});
 
       if (state.filterType !== 'all') {
          list = list.filter(t => t.type === state.filterType);
